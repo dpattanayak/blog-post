@@ -1,7 +1,7 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
-function Error({ message }) {
-  return <small className="text-red-600 mt-8">{message}</small>;
-}
+const Error = forwardRef(function Error({ message }, ref) {
+  return <p className="text-red-600 my-2 text-sm">{message}</p>;
+});
 
 export default Error;

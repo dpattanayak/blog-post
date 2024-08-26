@@ -78,7 +78,7 @@ function Signup() {
                 },
               })}
             />
-            {errors.email && <Error {...errors.name} />}
+            {errors.email && <Error {...errors.email} />}
 
             <Input
               label="Password: "

@@ -1,24 +1,36 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Container, Input, RTE, Select } from "../components";
+import { Button, Container, Error, Input, RTE, Select } from "../components";
 import { database, storage } from "../services";
+import { addPost, updatePost } from "../store/postSlice";
 
 function PostForm({ post }) {
-  const { register, handleSubmit, watch, setValue, getValues, control } =
-    useForm({
-      defaultValues: {
-        title: post?.title || "",
-        slug: post?.slug || "",
-        content: post?.content || "",
-        status: post?.status || "active",
-      },
-    });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    getValues,
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      title: post?.title || "",
+      slug: post?.slug || "",
+      content: post?.content || "",
+      status: post?.status || "active",
+    },
+  });
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+
   const submit = async (data) => {
+    setIsLoading(true);
     const file = data.image[0] && (await storage.uploadFile(data.image[0]));
     if (post) {
       if (file && post?.featuredImage) {
@@ -29,16 +41,31 @@ function PostForm({ post }) {
         userid: userData.$id,
         featuredImage: file ? file.$id : post.featuredImage,
       });
-      if (updatedPost) navigate(`/post/${updatedPost.$id}`);
+      if (updatedPost) {
+        dispatch(updatePost({ $id: updatedPost.$id, body: updatedPost }));
+        navigate(`/post/${updatedPost.$id}`);
+      } else setIsLoading(false);
     } else {
       if (file) data.featuredImage = file.$id;
       const createdPost = await database.createPost({
         ...data,
         userid: userData.$id,
       });
-      if (createdPost) navigate(`/post/${createdPost.$id}`);
-      else if (file) storage.deleteFile(file.$id);
+      if (createdPost) {
+        dispatch(addPost(createdPost));
+        navigate(`/post/${createdPost.$id}`);
+      } else if (file) {
+        storage.deleteFile(file.$id);
+        setIsLoading(false);
+      }
     }
+  };
+
+  const getButtonText = () => {
+    let text = post ? "Update" : "Submit";
+    if (isLoading && text == "Update") return "Updating ...";
+    else if (isLoading && text == "Submit") return "Submitting ...";
+    else return text;
   };
 
   const slugTransform = useCallback((value) => {
@@ -55,6 +82,8 @@ function PostForm({ post }) {
   }, []);
 
   useEffect(() => {
+    if (post && post.$id) setValue("slug", post.$id);
+
     const subscription = watch((value, { name }) => {
       if (name === "title") {
         setValue("slug", slugTransform(value.title), { shouldValidate: true });
@@ -73,13 +102,28 @@ function PostForm({ post }) {
           <Input
             label="Title :"
             placeholder="Title"
-            className="mb-4"
-            {...register("title", { required: true })}
+            disabled={!!post}
+            className={`${!!post ? "cursor-not-allowed bg-gray-300" : ""} mb-4`}
+            {...register("title", {
+              required: "Title is required",
+              maxLength: {
+                value: 36,
+                message: "Title must be at most 36 characters long",
+              },
+              pattern: {
+                value: /^[a-zA-Z0-9][a-zA-Z0-9._-\s]*$/,
+                message:
+                  "Title can only contain alphanumeric characters, periods, hyphens, and underscores, and cannot start with a special character.",
+              },
+            })}
           />
+          {errors.title && <Error {...errors.title} />}
+
           <Input
             label="Slug :"
             placeholder="Slug"
-            className="mb-4"
+            disabled={!!post}
+            className={`${!!post ? "cursor-not-allowed bg-gray-300" : ""} mb-4`}
             {...register("slug", { required: true })}
             onInput={(e) => {
               setValue("slug", slugTransform(e.currentTarget.value), {
@@ -119,10 +163,11 @@ function PostForm({ post }) {
           />
           <Button
             type="submit"
-            bgColor={post ? "bg-green-500" : undefined}
-            className="w-full"
+            disabled={isLoading}
+            bgColor={post ? "bg-green-600" : "bg-blue-600"}
+            className={`${isLoading && "bg-opacity-60"} w-full`}
           >
-            {post ? "Update" : "Submit"}
+            {getButtonText()}
           </Button>
         </div>
       </form>

@@ -1,8 +1,8 @@
 import React from "react";
 
-function Container({ children, className }) {
+function Container({ children, className = "" }) {
   return (
-    <div className={`min-h-screen flex flex-wrap ${className}`}>
+    <div className={`flex flex-wrap ${className}`}>
       <div className="w-full block">{children}</div>
     </div>
   );

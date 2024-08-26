@@ -1,32 +1,37 @@
 import parse from "html-react-parser";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, Container } from "../components";
 import { database, storage } from "../services";
+import { removePost } from "../store/postSlice";
 
 export default function Post() {
   const [post, setPost] = useState(null);
   const { slug } = useParams();
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.userData);
-
-  const isAuthor = post && userData ? post.userId === userData.$id : false;
+  const postState = useSelector((state) => state.post.posts);
+  const activePost = postState.filter((post) => post.$id === slug)[0];
+  const isAuthor = post && userData ? post.userid === userData.$id : false;
 
   useEffect(() => {
     if (slug) {
-      database.getPost(slug).then((post) => {
-        if (post) setPost(post);
-        else navigate("/");
-      });
+      if (!activePost)
+        database.getPost(slug).then((post) => {
+          if (post) setPost(post);
+          else navigate("/");
+        });
+      else setPost(activePost);
     } else navigate("/");
   }, [slug, navigate]);
 
   const deletePost = () => {
     database.deletePost(post.$id).then((status) => {
       if (status) {
-        database.deleteFile(post.featuredImage);
+        dispatch(removePost(post.$id));
+        storage.deleteFile(post.featuredImage);
         navigate("/");
       }
     });

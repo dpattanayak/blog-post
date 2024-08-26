@@ -13,7 +13,7 @@ function App() {
     auth
       .getCurrentUser()
       .then((userData) => {
-        if (userData) dispatch(login({ userData }));
+        if (userData) dispatch(login(userData));
         else dispatch(logout());
       })
       .finally(() => setIsLoading(false));
@@ -22,7 +22,9 @@ function App() {
   return (
     <Container>
       <Header />
-      <main className="p-10">{isLoading ? <Loading /> : <Outlet />}</main>
+      <main className="p-10 min-h-[85vh] bg-neutral-100">
+        {isLoading ? <Loading /> : <Outlet />}
+      </main>
       <Footer />
     </Container>
   );
