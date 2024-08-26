@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { FallBackPage, PostCard } from "../components";
 import { database } from "../services";
 
 function Home() {
   const [posts, setPosts] = useState([]);
+  const authStatus = useSelector((state) => state.auth.status);
+
   useEffect(() => {
-    database.getPosts().then((posts) => posts && setPosts(posts.documents));
+    if (authStatus)
+      database.getPosts().then((posts) => posts && setPosts(posts.documents));
   }, []);
+
+  if (!authStatus) {
+    return <FallBackPage />;
+  }
 
   return posts && posts.length ? (
     <div className="w-full py-8">

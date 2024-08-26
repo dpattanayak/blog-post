@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PostCard } from "../components";
+import { Container, PostCard } from "../components";
 import { database } from "../services";
 
 function AllPosts() {
@@ -9,15 +9,17 @@ function AllPosts() {
   }, []);
 
   return (
-    <div className="w-full py-8">
-      <div className="flex flex-wrap">
-        {posts.map((post) => (
-          <div className="p-2 w-1/4" key={post.$id}>
-            <PostCard {...post} />
-          </div>
-        ))}
+    <Container>
+      <div className="w-full py-8">
+        <div className="flex flex-wrap">
+          {posts.map((post) => (
+            <div className="p-2 w-1/4" key={post.$id}>
+              <PostCard {...post} />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </Container>
   );
 }
 
