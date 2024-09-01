@@ -1,6 +1,7 @@
 import AuthGuard from "./AuthGuard";
 import Container from "./Container";
 import FallBackPage from "./FallBackPage";
+import FileUploader from "./FileUploader";
 import Footer from "./Footer";
 import Header from "./Header/Header";
 import LogoutButton from "./Header/LogoutButton";
@@ -16,6 +17,7 @@ import Signup from "./Signup";
 import Button from "./Utils/Button";
 import Error from "./Utils/Error";
 import Input from "./Utils/Input";
+import ProgressBar from "./Utils/ProgressBar";
 import Select from "./Utils/Select";
 
 export {
@@ -24,6 +26,7 @@ export {
   Container,
   Error,
   FallBackPage,
+  FileUploader,
   Footer,
   Header,
   Input,
@@ -34,6 +37,7 @@ export {
   Post,
   PostCard,
   PostForm,
+  ProgressBar,
   RTE,
   Select,
   Signup,

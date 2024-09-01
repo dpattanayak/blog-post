@@ -2,7 +2,15 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Container, Error, Input, RTE, Select } from "../components";
+import {
+  Button,
+  Container,
+  Error,
+  FileUploader,
+  Input,
+  RTE,
+  Select,
+} from "../components";
 import { database, storage } from "../services";
 import { addPost, updatePost } from "../store/postSlice";
 
@@ -30,41 +38,42 @@ function PostForm({ post }) {
   const dispatch = useDispatch();
 
   const submit = async (data) => {
-    setIsLoading(true);
-    const file = data.image[0] && (await storage.uploadFile(data.image[0]));
-    if (post) {
-      if (file && post?.featuredImage) {
-        storage.deleteFile(post.featuredImage);
+    try {
+      setIsLoading(true);
+      if (post) {
+        if (data.featuredImage !== post?.featuredImage) {
+          storage.deleteFile(post.featuredImage);
+        }
+        const updatedPost = await database.updatePost(post.$id, {
+          ...data,
+          userid: userData.$id,
+        });
+        if (updatedPost) {
+          dispatch(updatePost({ $id: updatedPost.$id, body: updatedPost }));
+          navigate(`/post/${updatedPost.$id}`);
+        } else setIsLoading(false);
+      } else {
+        const createdPost = await database.createPost({
+          ...data,
+          userid: userData.$id,
+        });
+        if (createdPost) {
+          dispatch(addPost(createdPost));
+          navigate(`/post/${createdPost.$id}`);
+        } else if (file) {
+          storage.deleteFile(file.$id);
+          setIsLoading(false);
+        }
       }
-      const updatedPost = await database.updatePost(post.$id, {
-        ...data,
-        userid: userData.$id,
-        featuredImage: file ? file.$id : post.featuredImage,
-      });
-      if (updatedPost) {
-        dispatch(updatePost({ $id: updatedPost.$id, body: updatedPost }));
-        navigate(`/post/${updatedPost.$id}`);
-      } else setIsLoading(false);
-    } else {
-      if (file) data.featuredImage = file.$id;
-      const createdPost = await database.createPost({
-        ...data,
-        userid: userData.$id,
-      });
-      if (createdPost) {
-        dispatch(addPost(createdPost));
-        navigate(`/post/${createdPost.$id}`);
-      } else if (file) {
-        storage.deleteFile(file.$id);
-        setIsLoading(false);
-      }
+    } catch (error) {
+      setIsLoading(false);
     }
   };
 
   const getButtonText = () => {
     let text = post ? "Update" : "Submit";
     if (isLoading && text == "Update") return "Updating ...";
-    else if (isLoading && text == "Submit") return "Submitting ...";
+    else if (isLoading && text == "Submit") return "Submiting ...";
     else return text;
   };
 
@@ -136,16 +145,19 @@ function PostForm({ post }) {
             name="content"
             control={control}
             defaultValue={getValues("content")}
+            rules={{ required: "Content is required" }}
           />
+          {errors.content && <Error {...errors.content} />}
         </div>
         <div className="w-1/3 px-2">
-          <Input
+          <FileUploader
             label="Featured Image :"
-            type="file"
-            className="mb-4"
-            accept="image/png, image/jpg, image/jpeg, image/gif"
-            {...register("image", { required: !post })}
+            name="featuredImage"
+            control={control}
+            rules={{ required: !post && "Featured Image is required" }}
           />
+          {errors.featuredImage && <Error {...errors.featuredImage} />}
+
           {post && (
             <div className="w-full mb-4">
               <img

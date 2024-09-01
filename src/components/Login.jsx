@@ -1,29 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../services";
 import { login as storeLogin } from "../store/authSlice";
-import { Button, Input, Logo } from "./index";
+import { Button, Error, Input, Logo } from "./index";
 
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm();
-  const [error, setError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   // handling form submit through login() bcz handleSubmit is resorved by useForm()
   const login = async (data) => {
-    setError("");
-    try {
-      const session = await auth.login(data);
-      if (session) {
-        const userData = await auth.getCurrentUser();
-        if (userData) dispatch(storeLogin({ userData }));
-        navigate("/");
-      }
-    } catch (error) {
-      setError(error.message);
+    const session = await auth.login(data);
+    if (session || session?.type == "user_session_already_exists") {
+      const userData = await auth.getCurrentUser();
+      if (userData) dispatch(storeLogin({ userData }));
+      navigate("/");
     }
   };
 
@@ -49,7 +47,6 @@ function Login() {
             Sign Up
           </Link>
         </p>
-        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
         <form onSubmit={handleSubmit(login)} className="mt-8">
           <div className="space-y-5">
             <Input
@@ -57,21 +54,29 @@ function Login() {
               placeholder="Enter your email"
               type="email"
               {...register("email", {
-                required: true,
+                required: "Email is required",
                 pattern: {
                   value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
                   message: "Email address must be a valid address",
                 },
               })}
             />
+            {errors.email && <Error {...errors.email} />}
+
             <Input
               label="Password: "
               type="password"
               placeholder="Enter your password"
               {...register("password", {
-                required: true,
+                required: "Password is required",
+                pattern: {
+                  value: /^.{8,256}$/,
+                  message: "Password must be between 8 and 256 characters long",
+                },
               })}
             />
+            {errors.password && <Error {...errors.password} />}
+
             <Button type="submit" className="w-full">
               Sign in
             </Button>
