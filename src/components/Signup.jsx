@@ -8,7 +8,7 @@ import { Button, Error, Input, Logo } from "./index";
 
 function Signup() {
   const navigate = useNavigate();
-  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const {
     register,
@@ -17,16 +17,13 @@ function Signup() {
   } = useForm();
 
   const createAccount = async (data) => {
-    setError("");
-    try {
-      const session = await auth.createAccount(data);
-      if (session) {
-        const userData = await auth.getCurrentUser();
-        if (userData) dispatch(login(userData));
-        navigate("/");
-      }
-    } catch (error) {
-      setError(error.message);
+    setIsLoading(true);
+    const session = await auth.createAccount(data);
+    if (session) {
+      const userData = await auth.getCurrentUser();
+      if (userData) dispatch(login(userData));
+      navigate("/");
+      setIsLoading(false);
     }
   };
 
@@ -52,8 +49,6 @@ function Signup() {
             Sign In
           </Link>
         </p>
-
-        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
 
         <form onSubmit={handleSubmit(createAccount)} className="mt-8">
           <div className="space-y-5">
@@ -94,7 +89,11 @@ function Signup() {
             />
             {errors.password && <Error {...errors.password} />}
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className={`w-full ${isLoading && "bg-blue-800"}`}
+              disabled={isLoading}
+            >
               Create Account
             </Button>
           </div>

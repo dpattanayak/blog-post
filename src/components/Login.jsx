@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { Button, Error, Input, Logo } from "./index";
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -17,11 +18,13 @@ function Login() {
 
   // handling form submit through login() bcz handleSubmit is resorved by useForm()
   const login = async (data) => {
+    setIsLoading(true);
     const session = await auth.login(data);
     if (session || session?.type == "user_session_already_exists") {
       const userData = await auth.getCurrentUser();
       if (userData) dispatch(storeLogin({ userData }));
       navigate("/");
+      setIsLoading(false);
     }
   };
 
@@ -77,7 +80,11 @@ function Login() {
             />
             {errors.password && <Error {...errors.password} />}
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className={`w-full ${isLoading && "bg-blue-800"}`}
+              disabled={isLoading}
+            >
               Sign in
             </Button>
           </div>

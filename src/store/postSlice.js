@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   posts: [],
+  bgImage: {},
 };
 
 const postSlice = createSlice({
@@ -26,8 +27,21 @@ const postSlice = createSlice({
     removePost: (state, action) => {
       state.posts = state.posts.filter((post) => post.$id !== action.payload);
     },
+
+    activeBGImage: (state, action) => {
+      state.bgImage = action.payload;
+    },
+
+    resetState: () => initialState,
   },
 });
 
-export const { allPosts, addPost, updatePost, removePost } = postSlice.actions;
+export const {
+  allPosts,
+  addPost,
+  updatePost,
+  removePost,
+  activeBGImage,
+  resetState,
+} = postSlice.actions;
 export default postSlice.reducer;

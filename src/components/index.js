@@ -3,6 +3,7 @@ import Container from "./Container";
 import FallBackPage from "./FallBackPage";
 import FileUploader from "./FileUploader";
 import Footer from "./Footer";
+import DropDownMenu from "./Header/DropDownMenu";
 import Header from "./Header/Header";
 import LogoutButton from "./Header/LogoutButton";
 import Loading from "./Loading";
@@ -24,6 +25,7 @@ export {
   AuthGuard,
   Button,
   Container,
+  DropDownMenu,
   Error,
   FallBackPage,
   FileUploader,
