@@ -18,7 +18,7 @@ export class DBService {
 
       return await this.databases.createDocument(
         config.appWriteDatabaseId,
-        config.appWriteCollectionId,
+        config.appWriteArticleCollectionId,
         slug,
         {
           title,
@@ -40,7 +40,7 @@ export class DBService {
 
       return await this.databases.updateDocument(
         config.appWriteDatabaseId,
-        config.appWriteCollectionId,
+        config.appWriteArticleCollectionId,
         slug,
         {
           title,
@@ -60,7 +60,7 @@ export class DBService {
     try {
       await this.databases.deleteDocument(
         config.appWriteDatabaseId,
-        config.appWriteCollectionId,
+        config.appWriteArticleCollectionId,
         slug
       );
       return true;
@@ -74,7 +74,7 @@ export class DBService {
     try {
       return await this.databases.getDocument(
         config.appWriteDatabaseId,
-        config.appWriteCollectionId,
+        config.appWriteArticleCollectionId,
         slug
       );
     } catch (error) {
@@ -87,11 +87,70 @@ export class DBService {
     try {
       return await this.databases.listDocuments(
         config.appWriteDatabaseId,
-        config.appWriteCollectionId,
+        config.appWriteArticleCollectionId,
         [Query.equal("isActive", true), Query.orderAsc("title")]
       );
     } catch (error) {
       console.log("Appwrite service :: getPosts :: error", error);
+      return false;
+    }
+  }
+
+  async createProfile(userId, data) {
+    try {
+      let { name, profilePic, darkMode } = data;
+
+      return await this.databases.createDocument(
+        config.appWriteDatabaseId,
+        config.appWriteUserCollectionId,
+        userId,
+        { name, profilePic, darkMode }
+      );
+    } catch (error) {
+      console.log("Appwrite service :: createProfile :: error", error);
+      return false;
+    }
+  }
+
+  async getProfile(userId) {
+    try {
+      return await this.databases.getDocument(
+        config.appWriteDatabaseId,
+        config.appWriteUserCollectionId,
+        userId
+      );
+    } catch (error) {
+      console.log("Appwrite service :: getProfile :: error", error);
+      return false;
+    }
+  }
+
+  async updateProfile(userId, data) {
+    try {
+      let { name, profilePic, darkMode } = data;
+
+      return await this.databases.updateDocument(
+        config.appWriteDatabaseId,
+        config.appWriteUserCollectionId,
+        userId,
+        { name, profilePic, darkMode }
+      );
+    } catch (error) {
+      console.log("Appwrite service :: updateProfile :: error", error);
+      return false;
+    }
+  }
+
+  async deleteProfile(userId) {
+    try {
+      await this.databases.deleteDocument(
+        config.appWriteDatabaseId,
+        config.appWriteUserCollectionId,
+        userId
+      );
+      return true;
+    } catch (error) {
+      console.log("Appwrite service :: deleteProfile :: error", error);
       return false;
     }
   }

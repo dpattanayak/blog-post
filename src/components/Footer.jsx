@@ -4,7 +4,7 @@ import Logo from "./Logo";
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-[#252525] border-y dark:border-gray-700">
+    <footer className="bg-bg-light dark:bg-bg-dark border-y dark:border-gray-700">
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between">
           <div className="mb-6 md:mb-0">
@@ -14,7 +14,7 @@ export default function Footer() {
           </div>
           <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 dark:text-[#f5f5f5] uppercase">
+              <h2 className="mb-6 text-sm font-semibold text-text-light dark:text-text-dark uppercase">
                 Resources
               </h2>
               <ul className="text-gray-500 dark:text-[#999999] font-medium">
@@ -31,7 +31,7 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 dark:text-[#f5f5f5] uppercase">
+              <h2 className="mb-6 text-sm font-semibold text-text-light dark:text-text-dark uppercase">
                 Follow us
               </h2>
               <ul className="text-gray-500 dark:text-[#999999] font-medium">

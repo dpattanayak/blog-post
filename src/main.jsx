@@ -5,15 +5,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthGuard, FallBackPage } from "./components";
 import "./index.css";
-import {
-  AddPost,
-  AllPosts,
-  EditPost,
-  Home,
-  Login,
-  Post,
-  Signup,
-} from "./pages";
+import { AddPost, EditPost, Home, Login, Post, Profile, Signup } from "./pages";
 import store from "./store";
 
 const router = createBrowserRouter([
@@ -23,10 +15,6 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/home",
         element: <Home />,
       },
       {
@@ -42,14 +30,6 @@ const router = createBrowserRouter([
         element: (
           <AuthGuard authentication={false}>
             <Signup />
-          </AuthGuard>
-        ),
-      },
-      {
-        path: "/all-posts",
-        element: (
-          <AuthGuard authentication>
-            <AllPosts />
           </AuthGuard>
         ),
       },
@@ -71,7 +51,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/post/:slug",
-        element: <Post />,
+        element: (
+          <AuthGuard authentication>
+            <Post />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <AuthGuard authentication>
+            <Profile />
+          </AuthGuard>
+        ),
       },
       {
         path: "*",

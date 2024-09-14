@@ -19,13 +19,13 @@ function PostCard({ $id, title, featuredImage }) {
   return (
     <Container>
       <Link to={`/post/${$id}`}>
-        <div className="w-full bg-white dark:bg-[#252525] rounded-xl p-4 shadow-xl min-w-[200px]">
+        <div className="w-full bg-primary-light/20 dark:bg-primary-dark/20 rounded-xl p-4 shadow-lg min-w-[200px]">
           <div className="w-full justify-center mb-4">
             <div
               className="h-[130px] bg-cover bg-center border border-[#f1f1f1] dark:border-[#2d2d2d]"
               style={{ backgroundImage: `url(${backgroundImage})` }}
             ></div>
-            <h2 className="font-bold mt-4 dark:text-[#E8E6E3]">
+            <h2 className="font-bold mt-4 text-text-light dark:text-text-dark">
               {truncateString(title)}
             </h2>
           </div>

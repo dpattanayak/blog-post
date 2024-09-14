@@ -6,12 +6,14 @@ import Footer from "./Footer";
 import DropDownMenu from "./Header/DropDownMenu";
 import Header from "./Header/Header";
 import LogoutButton from "./Header/LogoutButton";
+import Hero from "./Hero";
 import Loading from "./Loading";
 import Login from "./Login";
 import Logo from "./Logo";
 import Post from "./Post";
 import PostCard from "./PostCard";
 import PostForm from "./PostForm";
+import Profile from "./Profile";
 import RTE from "./RTE";
 import Signup from "./Signup";
 
@@ -31,6 +33,7 @@ export {
   FileUploader,
   Footer,
   Header,
+  Hero,
   Input,
   Loading,
   Login,
@@ -39,6 +42,7 @@ export {
   Post,
   PostCard,
   PostForm,
+  Profile,
   ProgressBar,
   RTE,
   Select,

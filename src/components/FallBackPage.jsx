@@ -25,7 +25,7 @@ function FallBackPage({
       .join(" ");
   };
   return (
-    <Container className="items-center content-center bg-zinc-200 rounded-lg min-h-screen">
+    <Container className="items-center content-center rounded-lg min-h-[85vh]">
       <div className="text-center">
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="mt-4">{subtitle}</p>

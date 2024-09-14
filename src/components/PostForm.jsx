@@ -105,84 +105,92 @@ function PostForm({ post }) {
   }, [watch, slugTransform, setValue]);
 
   return (
-    <Container>
-      <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-        <div className="w-2/3 px-2">
-          <Input
-            label="Title :"
-            placeholder="Title"
-            disabled={!!post}
-            className={`${!!post ? "cursor-not-allowed bg-gray-300" : ""} mb-4`}
-            {...register("title", {
-              required: "Title is required",
-              maxLength: {
-                value: 36,
-                message: "Title must be at most 36 characters long",
-              },
-              pattern: {
-                value: /^[a-zA-Z0-9][a-zA-Z0-9._-\s]*$/,
-                message:
-                  "Title can only contain alphanumeric characters, periods, hyphens, and underscores, and cannot start with a special character.",
-              },
-            })}
-          />
-          {errors.title && <Error {...errors.title} />}
+    <Container className="mx-auto max-w-screen-xl">
+      <div
+        className={`bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-10 border border-black/10 transition duration-200`}
+      >
+        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
+          <div className="w-2/3 px-2">
+            <Input
+              label="Title :"
+              placeholder="Title"
+              disabled={!!post}
+              className={`${
+                !!post ? "cursor-not-allowed bg-gray-300" : ""
+              } mb-4`}
+              {...register("title", {
+                required: "Title is required",
+                maxLength: {
+                  value: 36,
+                  message: "Title must be at most 36 characters long",
+                },
+                pattern: {
+                  value: /^[a-zA-Z0-9][a-zA-Z0-9._-\s]*$/,
+                  message:
+                    "Title can only contain alphanumeric characters, periods, hyphens, and underscores, and cannot start with a special character.",
+                },
+              })}
+            />
+            {errors.title && <Error {...errors.title} />}
 
-          <Input
-            label="Slug :"
-            placeholder="Slug"
-            disabled={!!post}
-            className={`${!!post ? "cursor-not-allowed bg-gray-300" : ""} mb-4`}
-            {...register("slug", { required: true })}
-            onInput={(e) => {
-              setValue("slug", slugTransform(e.currentTarget.value), {
-                shouldValidate: true,
-              });
-            }}
-          />
-          <RTE
-            label="Content :"
-            name="content"
-            control={control}
-            defaultValue={getValues("content")}
-            rules={{ required: "Content is required" }}
-          />
-          {errors.content && <Error {...errors.content} />}
-        </div>
-        <div className="w-1/3 px-2">
-          <FileUploader
-            label="Featured Image :"
-            name="featuredImage"
-            control={control}
-            rules={{ required: !post && "Featured Image is required" }}
-          />
-          {errors.featuredImage && <Error {...errors.featuredImage} />}
+            <Input
+              label="Slug :"
+              placeholder="Slug"
+              disabled={!!post}
+              className={`${
+                !!post ? "cursor-not-allowed bg-gray-300" : ""
+              } mb-4`}
+              {...register("slug", { required: true })}
+              onInput={(e) => {
+                setValue("slug", slugTransform(e.currentTarget.value), {
+                  shouldValidate: true,
+                });
+              }}
+            />
+            <RTE
+              label="Content :"
+              name="content"
+              control={control}
+              defaultValue={getValues("content")}
+              rules={{ required: "Content is required" }}
+            />
+            {errors.content && <Error {...errors.content} />}
+          </div>
+          <div className="w-1/3 px-2">
+            <FileUploader
+              label="Featured Image :"
+              name="featuredImage"
+              control={control}
+              rules={{ required: !post && "Featured Image is required" }}
+            />
+            {errors.featuredImage && <Error {...errors.featuredImage} />}
 
-          {post && (
-            <div className="w-full mb-4">
-              <img
-                src={storage.getFilePreview(post.featuredImage)}
-                alt={post.title}
-                className="rounded-lg"
-              />
-            </div>
-          )}
-          <Select
-            options={["active", "inactive"]}
-            label="Status :"
-            className="mb-4"
-            {...register("status", { required: true })}
-          />
-          <Button
-            type="submit"
-            disabled={isLoading}
-            bgColor={post ? "bg-green-600" : "bg-blue-600"}
-            className={`${isLoading && "bg-opacity-60"} w-full`}
-          >
-            {getButtonText()}
-          </Button>
-        </div>
-      </form>
+            {post && (
+              <div className="w-full mb-4">
+                <img
+                  src={storage.getFilePreview(post.featuredImage)}
+                  alt={post.title}
+                  className="rounded-lg"
+                />
+              </div>
+            )}
+            <Select
+              options={["active", "inactive"]}
+              label="Status :"
+              className="mb-4"
+              {...register("status", { required: true })}
+            />
+            <Button
+              type="submit"
+              disabled={isLoading}
+              bgColor={post ? "bg-green-600" : "bg-blue-600"}
+              className={`${isLoading && "bg-opacity-60"} w-full`}
+            >
+              {getButtonText()}
+            </Button>
+          </div>
+        </form>
+      </div>
     </Container>
   );
 }

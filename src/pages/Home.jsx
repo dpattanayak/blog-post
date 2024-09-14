@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FallBackPage, Loading, PostCard } from "../components";
+import {
+  Container,
+  FallBackPage,
+  Hero,
+  Loading,
+  PostCard,
+} from "../components";
 import { database } from "../services";
 import { allPosts } from "../store/postSlice";
 
@@ -28,29 +34,34 @@ function Home() {
   }, [dispatch, postState]);
 
   if (!authStatus) {
-    return <FallBackPage />;
+    return <Hero />;
   } else if (isLoading) {
     return <Loading />;
   }
 
-  return posts && posts.length ? (
-    <div className="w-full py-8">
-      <div className="flex flex-wrap">
-        {posts.map((post) => (
-          <div key={post.$id} className="p-2">
-            <PostCard {...post} />
+  return (
+    <Container className="mx-auto max-w-screen-xl">
+      <div className="w-full py-8">
+        {posts && posts.length > 0 ? (
+          <div className="flex flex-wrap justify-center sm:justify-start">
+            {posts.map((post) => (
+              <div
+                key={post.$id}
+                className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5"
+              >
+                <PostCard {...post} />
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <FallBackPage
+            title="Posts not found"
+            subtitle="Please create some posts to list here .."
+            redirect="add-post"
+          />
+        )}
       </div>
-    </div>
-  ) : (
-    <div className="w-full py-8">
-      <FallBackPage
-        title="Posts not found"
-        subtitle="Please create some posts to list here .."
-        redirect="add-post"
-      />
-    </div>
+    </Container>
   );
 }
 

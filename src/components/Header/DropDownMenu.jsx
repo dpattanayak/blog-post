@@ -1,11 +1,5 @@
-import {
-  faMoon,
-  faSignOutAlt,
-  faSun,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
+import { FaMoon, FaSignOutAlt, FaSun, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../services";
@@ -20,7 +14,7 @@ function DropDownMenu() {
   const themeState = useSelector((state) => state.theme.selectedTheme);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
@@ -51,9 +45,9 @@ function DropDownMenu() {
 
   const handleLogout = () => {
     auth.logout().then(() => {
+      navigate("/");
       dispatch(logout());
       dispatch(resetState());
-      navigate("/");
     });
   };
 
@@ -61,7 +55,7 @@ function DropDownMenu() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="bg-white dark:bg-[#252525] text-gray-800 dark:text-[#E8E6E3] font-semibold py-2 px-4 rounded inline-flex items-center"
+        className="text-text-light dark:text-text-dark font-semibold py-2 px-4 rounded inline-flex items-center"
       >
         <div className="flex items-center">
           <div
@@ -100,11 +94,14 @@ function DropDownMenu() {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#252525] rounded-sm shadow-lg">
-          <ul className="text-gray-700 dark:text-[#E8E6E3]">
+        <div className="absolute right-0 mt-2 w-48 bg-bg-light dark:bg-bg-dark rounded-sm shadow-lg">
+          <ul className="text-text-light dark:text-text-dark">
             <li>
-              <button className="flex w-full px-4 py-2 hover:bg-blue-100 dark:hover:bg-slate-950 items-center">
-                <FontAwesomeIcon icon={faUser} className="mr-2" />
+              <button
+                onClick={() => navigate("/profile")}
+                className="flex w-full px-4 py-2 hover:bg-hover-light dark:hover:bg-hover-dark items-center"
+              >
+                <FaUser className="mr-2" />
                 Profile
               </button>
             </li>
@@ -112,12 +109,14 @@ function DropDownMenu() {
             <li>
               <button
                 onClick={toggleDarkMode}
-                className="flex w-full px-4 py-2 hover:bg-blue-100 dark:hover:bg-slate-950 items-center"
+                className="flex w-full px-4 py-2 hover:bg-hover-light dark:hover:bg-hover-dark items-center"
               >
-                <FontAwesomeIcon
-                  icon={darkMode ? faMoon : faSun}
-                  className="mr-2"
-                />
+                {darkMode ? (
+                  <FaMoon className="mr-2" />
+                ) : (
+                  <FaSun className="mr-2" />
+                )}
+
                 <span className="duration-200 ease-in">
                   {darkMode ? "Dark Mode" : "Light Mode"}
                 </span>
@@ -138,9 +137,9 @@ function DropDownMenu() {
             <li className="border-t border-gray-200 dark:border-gray-700">
               <button
                 onClick={handleLogout}
-                className="flex w-full px-4 py-2 hover:bg-blue-100 dark:hover:bg-slate-950 items-center"
+                className="flex w-full px-4 py-2 hover:bg-hover-light dark:hover:bg-hover-dark items-center"
               >
-                <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
+                <FaSignOutAlt className="mr-2" />
                 Logout
               </button>
             </li>

@@ -1,5 +1,6 @@
 import parse from "html-react-parser";
 import React, { useEffect, useState } from "react";
+import { FaClock } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, Container, Loading } from "../components";
@@ -62,11 +63,18 @@ export default function Post() {
     });
   };
 
+  const getAuthorName = (author) => {
+    return author
+      .split(" ")
+      .map((word) => word[0])
+      .join("");
+  };
+
   if (isLoading) return <Loading />;
   else
     return (
       post && (
-        <Container className="w-3/4 m-auto">
+        <Container className="mx-auto max-w-screen-xl">
           <div className="w-full mb-6">
             <h1 className="text-3xl font-bold">{post.title}</h1>
             {isAuthor && (
@@ -91,10 +99,36 @@ export default function Post() {
             />
           </div> */}
             <div
-              className="min-h-[500px] h-full rounded-md bg-cover bg-center border mb-8 bg-slate-400 border-[#f1f1f1] dark:border-[#2d2d2d]"
+              className="min-h-[130px] sm:min-h-[200px] md:min-h-[500px] h-full rounded-md bg-cover bg-center border mb-8 bg-slate-400 border-[#f1f1f1] dark:border-[#2d2d2d]"
               style={{ backgroundImage: `url(${backgroundImage})` }}
             ></div>
             <div className="browser-css">{parse(post.content)}</div>
+
+            <div className="flex justify-between items-center border-t border-t-gray-500 dark:border-t-gray-50 pt-4 mt-4 text-text-light/60 dark:text-text-dark/60">
+              {/* Author Info */}
+              <div className="flex items-center space-x-2">
+                {post?.profilePic ? (
+                  <img
+                    src={post.profilePic}
+                    alt={post.author}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gray-500 text-white flex items-center justify-center">
+                    <span className="font-bold">
+                      {getAuthorName(post?.author || "Unknown Author")}
+                    </span>
+                  </div>
+                )}
+                <span>{post?.author || "Unknown Author"}</span>
+              </div>
+
+              {/* Post Updated Info */}
+              <div className="flex items-center space-x-2">
+                <FaClock />
+                <span>{new Date(post.$updatedAt).toLocaleDateString()}</span>
+              </div>
+            </div>
           </div>
         </Container>
       )

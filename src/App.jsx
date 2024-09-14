@@ -22,7 +22,7 @@ function App() {
   return (
     <Container>
       <Header />
-      <main className="min-h-[85vh] bg-neutral-100 dark:bg-neutral-700">
+      <main className="min-h-[85vh]">
         {isLoading ? <Loading /> : <Outlet />}
       </main>
       <Footer />

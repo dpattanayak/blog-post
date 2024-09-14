@@ -22,16 +22,16 @@ function Login() {
     const session = await auth.login(data);
     if (session || session?.type == "user_session_already_exists") {
       const userData = await auth.getCurrentUser();
-      if (userData) dispatch(storeLogin({ userData }));
+      if (userData) dispatch(storeLogin(userData));
       navigate("/");
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center w-full h-[85vh]">
       <div
-        className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}
+        className={`mx-auto w-full max-w-lg bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-10 border border-black/10`}
       >
         <div className="mb-2 flex justify-center">
           <span className="inline-block w-full max-w-[100px]">
@@ -41,7 +41,7 @@ function Login() {
         <h2 className="text-center text-2xl font-bold leading-tight">
           Sign in to your account
         </h2>
-        <p className="mt-2 text-center text-base text-black/60">
+        <p className="mt-2 text-center text-base text-black/60 dark:text-white/60">
           Don&apos;t have any account?&nbsp;
           <Link
             to="/signup"

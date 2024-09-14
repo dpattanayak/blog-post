@@ -21,7 +21,7 @@ export class AuthService {
         name
       );
       if (userAccount) {
-        return this.login(email, password);
+        return this.login({ email, password });
       }
     } catch (error) {
       console.log("Appwrite service :: createAccount :: error", error);
@@ -50,6 +50,14 @@ export class AuthService {
       await this.account.deleteSessions();
     } catch (error) {
       console.log("Appwrite service :: logout :: error", error);
+    }
+  }
+
+  async deleteAccount() {
+    try {
+      // Todo using functions
+    } catch (error) {
+      console.log("Appwrite service :: deleteAccount :: error", error);
     }
   }
 }

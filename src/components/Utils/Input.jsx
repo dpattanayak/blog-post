@@ -5,6 +5,7 @@ const Input = forwardRef(function Input(
   ref
 ) {
   const id = useId();
+  const { readOnly } = { ...rest };
   return (
     <div className="w-full">
       {label && (
@@ -15,7 +16,11 @@ const Input = forwardRef(function Input(
       <input
         type={type}
         id={id}
-        className={`px-3 py-2 rounded-lg bg-white text-black outline-none focus:bg-gray-50 duration-200 border border-gray-200 w-full ${className}`}
+        className={`px-3 py-2 rounded-lg ${
+          readOnly
+            ? "bg-gray-300"
+            : "bg-light focus:bg-gray-50 border-gray-200 dark:border-white/10"
+        } text-black outline-none duration-200 border w-full ${className}`}
         ref={ref}
         {...rest}
       />
