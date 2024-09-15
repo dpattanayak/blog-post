@@ -3,12 +3,19 @@ import axios from "axios";
 import React, { useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import config from "../../conf/appwrite-config";
+import ImageCropper from "../lib/ImageCropper";
+import { storage } from "../services";
 
 const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
   const fileInputRef = useRef(null);
   const [percentage, setPercentage] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imgSrc, setImgSrc] = useState(null);
+  const [existingFile, setExistingFile] = useState(null);
+  const [initialCrop, setInitialCrop] = useState(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
 
   const handleDivClick = () => {
@@ -17,12 +24,20 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
     }
   };
 
-  const handleFileChange = (e, onChange) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPercentage(0);
-      setIsUploading(true);
-      handleUpload(file, onChange);
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImgSrc(reader.result);
+        setInitialCrop({
+          unit: "%",
+          width: 90,
+          aspect: 16 / 9,
+        });
+      };
+      reader.readAsDataURL(e.target.files[0]);
+      setSelectedFile(e.target.files[0]);
+      setIsModalOpen(true);
       e.target.value = null;
     }
   };
@@ -36,7 +51,7 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
     setIsDragging(false);
   };
 
-  const handleDrop = (e, onChange) => {
+  const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
 
@@ -44,13 +59,18 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
     if (file) {
       console.log("Dropped file:", file.name);
       fileInputRef.current.files = e.dataTransfer.files;
-      handleFileChange({ target: { files: e.dataTransfer.files } }, onChange);
+      handleFileChange({ target: { files: e.dataTransfer.files } });
       e.dataTransfer.value = null;
     }
   };
 
   const handleUpload = (file, onChange) => {
     if (!file) return;
+    if (existingFile) {
+      setIsUploading(false);
+      setUploadCompleted(false);
+      storage.deleteFile(existingFile);
+    }
 
     const formData = new FormData();
     formData.append("fileId", ID.unique());
@@ -81,11 +101,34 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
         onChange(response.data.$id);
         setUploadCompleted(true);
         setIsUploading(false);
+        setExistingFile(response.data.$id);
       })
       .catch((error) => {
         console.error("Upload failed:", error);
         setIsUploading(false);
       });
+  };
+
+  const handleUploadCroppedImage = (croppedFile, onChange) => {
+    const timestamp = Date.now();
+    const fileExtension = croppedFile.type.split("/")[1];
+    const newFileName = `image_${timestamp}.${fileExtension}`;
+
+    const newCroppedFile = new File([croppedFile], newFileName, {
+      type: croppedFile.type,
+      lastModified: Date.now(),
+    });
+
+    handleCancel();
+    setPercentage(0);
+    setIsUploading(true);
+    handleUpload(newCroppedFile, onChange);
+  };
+
+  const handleCancel = () => {
+    setImgSrc(null);
+    setSelectedFile(null);
+    setIsModalOpen(false);
   };
 
   return (
@@ -103,7 +146,8 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
               <input
                 type="file"
                 ref={fileInputRef}
-                onChange={(e) => handleFileChange(e, onChange)}
+                onChange={(e) => handleFileChange(e)}
+                accept="image/*"
                 className="hidden"
               />
 
@@ -139,6 +183,27 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
                   </div>
                 )}
               </div>
+
+              {/* Modal */}
+              {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-3/4 max-w-4xl max-h-[80vh] overflow-y-auto">
+                    <h2 className="text-xl mb-4">
+                      File Selected : {selectedFile.name}
+                    </h2>
+                    {imgSrc && (
+                      <ImageCropper
+                        imgSrc={imgSrc}
+                        initialCrop={initialCrop}
+                        onUpload={(croppedFile) =>
+                          handleUploadCroppedImage(croppedFile, onChange)
+                        }
+                        onCancel={handleCancel}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
             </>
           )}
         />

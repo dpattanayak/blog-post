@@ -19,7 +19,7 @@ function EditPost() {
 
   return (
     post && (
-      <div className="p-10 bg-neutral-900 text-white min-h-[85vh]">
+      <div className="p-10 min-h-[85vh] text-text-light dark:text-text-dark">
         <PostForm post={post} />
       </div>
     )

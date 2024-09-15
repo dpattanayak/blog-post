@@ -12,7 +12,7 @@ import {
   Select,
 } from "../components";
 import { database, storage } from "../services";
-import { addPost, updatePost } from "../store/postSlice";
+import { activeBGImage, addPost, updatePost } from "../store/postSlice";
 
 function PostForm({ post }) {
   const {
@@ -29,21 +29,21 @@ function PostForm({ post }) {
       slug: post?.slug || "",
       content: post?.content || "",
       status: post?.status || "active",
+      featuredImage: post?.featuredImage || "",
     },
   });
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
+  const bgImage = useSelector((state) => state.post.bgImage);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentImage, setCurrentImage] = useState(bgImage?.href || "");
   const dispatch = useDispatch();
 
   const submit = async (data) => {
     try {
       setIsLoading(true);
       if (post) {
-        if (data.featuredImage !== post?.featuredImage) {
-          storage.deleteFile(post.featuredImage);
-        }
         const updatedPost = await database.updatePost(post.$id, {
           ...data,
           userid: userData.$id,
@@ -96,13 +96,22 @@ function PostForm({ post }) {
     const subscription = watch((value, { name }) => {
       if (name === "title") {
         setValue("slug", slugTransform(value.title), { shouldValidate: true });
+      } else if (name === "featuredImage") {
+        if (value.featuredImage !== post?.featuredImage) {
+          storage.deleteFile(post.featuredImage);
+          const bgImage = storage.getFilePreview(value.featuredImage);
+          setCurrentImage(bgImage.href);
+          if (bgImage.href) {
+            dispatch(activeBGImage({ $id: post.$id, href: bgImage.href }));
+          }
+        }
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [watch, slugTransform, setValue]);
+  }, [watch, slugTransform, setValue, currentImage, storage]);
 
   return (
     <Container className="mx-auto max-w-screen-xl">
@@ -165,10 +174,10 @@ function PostForm({ post }) {
             />
             {errors.featuredImage && <Error {...errors.featuredImage} />}
 
-            {post && (
+            {currentImage && (
               <div className="w-full mb-4">
                 <img
-                  src={storage.getFilePreview(post.featuredImage)}
+                  src={`${currentImage}`}
                   alt={post.title}
                   className="rounded-lg"
                 />

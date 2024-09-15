@@ -35,7 +35,7 @@ export default function Header() {
     <header className="shadow sticky z-50 top-0">
       <nav className="bg-bg-light dark:bg-bg-dark border-gray-200 px-4 lg:px-6 py-2.5">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl sm:min-w-[365px]">
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center py-2.5">
             <Logo width="20" height="20" />
             <span className="text-sm font-bold dark:text-text-dark">
               Blog Post

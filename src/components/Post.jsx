@@ -22,36 +22,34 @@ export default function Post() {
 
   useEffect(() => {
     if (slug && postState.length) {
-      if (activePost?.$id !== bgImage?.$id)
-        database.getPost(slug).then((post) => {
-          if (post) {
-            setPost(post);
-            const bgImage = storage.getFilePreview(post.featuredImage);
-            if (bgImage.href) {
-              setBackgroundImage(bgImage.href);
-              dispatch(
-                activeBGImage({ $id: activePost.$id, href: bgImage.href })
-              );
-            }
-          } else navigate("/");
-        });
-      else if (activePost) {
-        if (!bgImage.href) {
-          const bgImage = storage.getFilePreview(activePost.featuredImage);
-          if (bgImage.href) {
-            setBackgroundImage(bgImage.href);
-            dispatch(
-              activeBGImage({ $id: activePost.$id, href: bgImage.href })
-            );
-          }
+      if (activePost) {
+        if (activePost?.$id !== bgImage?.$id) {
+          setPost(activePost);
+          setBGImage(activePost);
         } else {
           setPost(activePost);
+          setIsLoading(false);
           setBackgroundImage(bgImage.href);
         }
       }
-      setIsLoading(false);
-    } else navigate("/");
+    } else {
+      database.getPost(slug).then((post) => {
+        if (post) {
+          setPost(post);
+          setBGImage(post);
+        } else navigate("/");
+      });
+    }
   }, [slug, navigate]);
+
+  const setBGImage = ({ $id, featuredImage }) => {
+    const bgImage = storage.getFilePreview(featuredImage);
+    if (bgImage.href) {
+      setIsLoading(false);
+      setBackgroundImage(bgImage.href);
+      dispatch(activeBGImage({ $id, href: bgImage.href }));
+    }
+  };
 
   const deletePost = () => {
     database.deletePost(post.$id).then((status) => {
@@ -74,9 +72,9 @@ export default function Post() {
   else
     return (
       post && (
-        <Container className="mx-auto max-w-screen-xl">
+        <Container className="mx-auto max-w-screen-xl prose dark:prose-invert">
           <div className="w-full mb-6">
-            <h1 className="text-3xl font-bold">{post.title}</h1>
+            <h1 className="font-bold">{post.title}</h1>
             {isAuthor && (
               <div className="absolute right-6 top-24">
                 <Link to={`/edit-post/${post.$id}`}>
@@ -91,13 +89,6 @@ export default function Post() {
             )}
           </div>
           <div className="py-8 overflow-auto">
-            {/* <div className="w-full flex justify-center mb-4 relative rounded-xl p-2">
-            <img
-              src={storage.getFilePreview(post.featuredImage)}
-              alt={post.title}
-              className="rounded-xl"
-            />
-          </div> */}
             <div
               className="min-h-[130px] sm:min-h-[200px] md:min-h-[500px] h-full rounded-md bg-cover bg-center border mb-8 bg-slate-400 border-[#f1f1f1] dark:border-[#2d2d2d]"
               style={{ backgroundImage: `url(${backgroundImage})` }}
