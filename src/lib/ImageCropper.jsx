@@ -5,7 +5,7 @@ import ReactCrop, {
   makeAspectCrop,
 } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
-import { Input } from "../components";
+import { Button, Input } from "../components";
 import { canvasPreview } from "./canvasPreview";
 import { useDebounceEffect } from "./useDebounceEffect.js";
 
@@ -25,7 +25,14 @@ function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
   );
 }
 
-function ImageCropper({ imgSrc, initialCrop, onUpload, onCancel }) {
+function ImageCropper({
+  imgSrc,
+  initialCrop,
+  onUpload,
+  onCancel,
+  aspectRatio = 16 / 9,
+  circularCrop,
+}) {
   const previewCanvasRef = useRef(null);
   const imgRef = useRef(null);
   const hiddenAnchorRef = useRef(null);
@@ -34,7 +41,7 @@ function ImageCropper({ imgSrc, initialCrop, onUpload, onCancel }) {
   const [completedCrop, setCompletedCrop] = useState(null);
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
-  const [aspect, setAspect] = useState(16 / 9);
+  const [aspect, setAspect] = useState(aspectRatio);
 
   useEffect(() => {
     if (imgSrc && aspect && imgRef.current) {
@@ -58,8 +65,10 @@ function ImageCropper({ imgSrc, initialCrop, onUpload, onCancel }) {
     });
   }
 
-  async function handleUploadClick() {
+  async function handleUploadClick(event) {
     if (!completedCrop || !imgRef.current) return;
+    event.preventDefault();
+
     await canvasPreview(
       imgRef.current,
       previewCanvasRef.current,
@@ -96,11 +105,11 @@ function ImageCropper({ imgSrc, initialCrop, onUpload, onCancel }) {
     if (aspect) {
       setAspect(undefined);
     } else {
-      setAspect(16 / 9);
+      setAspect(aspectRatio);
 
       if (imgRef.current) {
         const { width, height } = imgRef.current;
-        const newCrop = centerAspectCrop(width, height, 16 / 9);
+        const newCrop = centerAspectCrop(width, height, aspectRatio);
         setCrop(newCrop);
         setCompletedCrop(convertToPixelCrop(newCrop, width, height));
       }
@@ -172,6 +181,7 @@ function ImageCropper({ imgSrc, initialCrop, onUpload, onCancel }) {
           onChange={(_, percentCrop) => setCrop(percentCrop)}
           onComplete={(c) => setCompletedCrop(c)}
           aspect={aspect}
+          circularCrop={circularCrop}
         >
           <img
             ref={imgRef}
@@ -197,21 +207,13 @@ function ImageCropper({ imgSrc, initialCrop, onUpload, onCancel }) {
           </div>
           {/* Upload and Cancel buttons */}
           <div className="flex flex-col md:flex-row justify-center items-center mt-4 space-y-4 md:space-y-0 md:space-x-4">
-            <button
-              type="button"
-              className="w-full md:w-auto bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-              onClick={handleUploadClick}
-            >
-              Upload
-            </button>
-
-            <button
-              type="button"
-              className="w-full md:w-auto bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600"
-              onClick={onCancel}
-            >
+            <Button type="button" bgColor="red" onClick={onCancel}>
               Cancel
-            </button>
+            </Button>
+
+            <Button type="button" bgColor="blue" onClick={handleUploadClick}>
+              Upload
+            </Button>
           </div>
         </>
       )}

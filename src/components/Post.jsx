@@ -73,16 +73,22 @@ export default function Post() {
     return (
       post && (
         <Container className="mx-auto max-w-screen-xl prose dark:prose-invert">
-          <div className="w-full mb-6">
-            <h1 className="font-bold">{post.title}</h1>
+          <div className="w-full mb-6 flex flex-row justify-between items-start">
+            <h1 className="font-bold text-lg sm:text-xl mb-4 sm:mb-0">
+              {post.title}
+            </h1>
             {isAuthor && (
-              <div className="absolute right-6 top-24">
+              <div className="flex flex-row justify-between gap-2 sm:gap-4">
                 <Link to={`/edit-post/${post.$id}`}>
-                  <Button bgColor="bg-green-500" className="mr-3">
+                  <Button bgColor="blue" className="w-full sm:w-auto">
                     Edit
                   </Button>
                 </Link>
-                <Button bgColor="bg-red-500" onClick={deletePost}>
+                <Button
+                  bgColor="red"
+                  onClick={deletePost}
+                  className="w-full sm:w-auto"
+                >
                   Delete
                 </Button>
               </div>
@@ -91,7 +97,9 @@ export default function Post() {
           <div className="py-8 overflow-auto">
             <div
               className="min-h-[130px] sm:min-h-[200px] md:min-h-[500px] h-full rounded-md bg-cover bg-center border mb-8 bg-slate-400 border-[#f1f1f1] dark:border-[#2d2d2d]"
-              style={{ backgroundImage: `url(${backgroundImage})` }}
+              style={{
+                backgroundImage: `url(${backgroundImage}), url('/broken.webp')`,
+              }}
             ></div>
             <div className="browser-css">{parse(post.content)}</div>
 

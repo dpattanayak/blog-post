@@ -2,11 +2,20 @@ import { ID } from "appwrite";
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { Controller } from "react-hook-form";
+import { useSelector } from "react-redux";
 import config from "../../conf/appwrite-config";
 import ImageCropper from "../lib/ImageCropper";
 import { storage } from "../services";
 
-const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
+const FileUploader = ({
+  name,
+  control,
+  rules,
+  label = "File Upload :",
+  width = 90,
+  aspect = 16 / 9,
+  circularCrop = false,
+}) => {
   const fileInputRef = useRef(null);
   const [percentage, setPercentage] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -17,6 +26,7 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
   const [existingFile, setExistingFile] = useState(null);
   const [initialCrop, setInitialCrop] = useState(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
+  const userData = useSelector((state) => state.auth.userData);
 
   const handleDivClick = () => {
     if (fileInputRef.current) {
@@ -31,8 +41,8 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
         setImgSrc(reader.result);
         setInitialCrop({
           unit: "%",
-          width: 90,
-          aspect: 16 / 9,
+          width,
+          aspect,
         });
       };
       reader.readAsDataURL(e.target.files[0]);
@@ -110,9 +120,10 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
   };
 
   const handleUploadCroppedImage = (croppedFile, onChange) => {
-    const timestamp = Date.now();
     const fileExtension = croppedFile.type.split("/")[1];
-    const newFileName = `image_${timestamp}.${fileExtension}`;
+    const newFileName = `${circularCrop ? "profile" : "blog"}_${
+      userData.email
+    }.${fileExtension}`;
 
     const newCroppedFile = new File([croppedFile], newFileName, {
       type: croppedFile.type,
@@ -189,7 +200,7 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                   <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-3/4 max-w-4xl max-h-[80vh] overflow-y-auto">
                     <h2 className="text-xl mb-4">
-                      File Selected : {selectedFile.name}
+                      Selected File : {selectedFile.name}
                     </h2>
                     {imgSrc && (
                       <ImageCropper
@@ -199,6 +210,8 @@ const FileUploader = ({ name, control, rules, label = "File Upload :" }) => {
                           handleUploadCroppedImage(croppedFile, onChange)
                         }
                         onCancel={handleCancel}
+                        aspectRatio={aspect}
+                        circularCrop={circularCrop}
                       />
                     )}
                   </div>

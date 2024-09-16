@@ -23,7 +23,9 @@ function PostCard({ $id, title, featuredImage }) {
           <div className="w-full justify-center mb-4">
             <div
               className="h-[130px] bg-cover bg-center border border-[#f1f1f1] dark:border-[#2d2d2d]"
-              style={{ backgroundImage: `url(${backgroundImage})` }}
+              style={{
+                backgroundImage: `url(${backgroundImage}), url('/broken.webp')`,
+              }}
             ></div>
             <h2 className="font-bold mt-4 text-text-light dark:text-text-dark">
               {truncateString(title)}

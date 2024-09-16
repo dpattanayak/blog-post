@@ -96,22 +96,6 @@ export class DBService {
     }
   }
 
-  async createProfile(userId, data) {
-    try {
-      let { name, profilePic, darkMode } = data;
-
-      return await this.databases.createDocument(
-        config.appWriteDatabaseId,
-        config.appWriteUserCollectionId,
-        userId,
-        { name, profilePic, darkMode }
-      );
-    } catch (error) {
-      console.log("Appwrite service :: createProfile :: error", error);
-      return false;
-    }
-  }
-
   async getProfile(userId) {
     try {
       return await this.databases.getDocument(
@@ -125,33 +109,50 @@ export class DBService {
     }
   }
 
-  async updateProfile(userId, data) {
-    try {
-      let { name, profilePic, darkMode } = data;
+  async upsertProfile(data) {
+    let databaseId = config.appWriteDatabaseId;
+    let collectionId = config.appWriteUserCollectionId;
+    let { $id, profilePic } = data;
 
-      return await this.databases.updateDocument(
-        config.appWriteDatabaseId,
-        config.appWriteUserCollectionId,
-        userId,
-        { name, profilePic, darkMode }
-      );
-    } catch (error) {
-      console.log("Appwrite service :: updateProfile :: error", error);
-      return false;
-    }
-  }
-
-  async deleteProfile(userId) {
     try {
-      await this.databases.deleteDocument(
-        config.appWriteDatabaseId,
-        config.appWriteUserCollectionId,
-        userId
+      const document = await this.databases.getDocument(
+        databaseId,
+        collectionId,
+        $id
       );
-      return true;
+      if (document) {
+        const updatedDocument = await this.databases.updateDocument(
+          databaseId,
+          collectionId,
+          $id,
+          {
+            user_id: $id,
+            profilePic,
+          }
+        );
+        return updatedDocument;
+      }
     } catch (error) {
-      console.log("Appwrite service :: deleteProfile :: error", error);
-      return false;
+      if (error.code === 404) {
+        try {
+          const newDocument = await this.databases.createDocument(
+            databaseId,
+            collectionId,
+            $id,
+            {
+              user_id: $id,
+              profilePic,
+            }
+          );
+          return newDocument;
+        } catch (error) {
+          console.log("Appwrite service :: upsertProfile :: error", error);
+          return false;
+        }
+      } else {
+        console.log("Appwrite service :: upsertProfile :: error", error);
+        return false;
+      }
     }
   }
 }

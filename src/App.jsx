@@ -1,20 +1,28 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 import { Container, Footer, Header, Loading } from "./components";
-import { auth } from "./services";
-import { login, logout } from "./store/authSlice";
+import { auth, database, storage } from "./services";
+import { login, logout, profile } from "./store/authSlice";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const profileState = useSelector((state) => state.auth.profile);
   const dispatch = useDispatch();
 
   useEffect(() => {
     auth
       .getCurrentUser()
       .then((userData) => {
-        if (userData) dispatch(login(userData));
-        else dispatch(logout());
+        if (userData) {
+          database.getProfile(userData.$id).then((data) => {
+            if (data?.profilePic && !profileState) {
+              const file = storage.getFilePreview(data.profilePic);
+              dispatch(profile({ ...data, href: file.href }));
+            }
+          });
+          dispatch(login(userData));
+        } else dispatch(logout());
       })
       .finally(() => setIsLoading(false));
   }, []);

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const HeroSection = () => {
   return (
     <section
-      className="bg-cover bg-center min-h-screen flex items-center justify-center relative"
+      className="bg-cover bg-center min-h-[85vh] flex items-center justify-center relative"
       style={{
         backgroundImage:
           'url("https://fastly.picsum.photos/id/184/4288/2848.jpg?hmac=l0fKWzmWf6ISTPMEm1WjRdxn35sg6U3GwZLn5lvKhTI")',

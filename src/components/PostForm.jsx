@@ -37,7 +37,7 @@ function PostForm({ post }) {
   const userData = useSelector((state) => state.auth.userData);
   const bgImage = useSelector((state) => state.post.bgImage);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentImage, setCurrentImage] = useState(bgImage?.href || "");
+  const [currentImage, setCurrentImage] = useState(post && bgImage?.href);
   const dispatch = useDispatch();
 
   const submit = async (data) => {
@@ -98,10 +98,10 @@ function PostForm({ post }) {
         setValue("slug", slugTransform(value.title), { shouldValidate: true });
       } else if (name === "featuredImage") {
         if (value.featuredImage !== post?.featuredImage) {
-          storage.deleteFile(post.featuredImage);
+          post && storage.deleteFile(post?.featuredImage);
           const bgImage = storage.getFilePreview(value.featuredImage);
           setCurrentImage(bgImage.href);
-          if (bgImage.href) {
+          if (post && bgImage.href) {
             dispatch(activeBGImage({ $id: post.$id, href: bgImage.href }));
           }
         }
@@ -118,15 +118,14 @@ function PostForm({ post }) {
       <div
         className={`bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-10 border border-black/10 transition duration-200`}
       >
-        <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-          <div className="w-2/3 px-2">
+        <form
+          onSubmit={handleSubmit(submit)}
+          className="flex flex-col gap-4 md:flex-row md:gap-6"
+        >
+          <div className="flex-1 px-2">
             <Input
               label="Title :"
               placeholder="Title"
-              disabled={!!post}
-              className={`${
-                !!post ? "cursor-not-allowed bg-gray-300" : ""
-              } mb-4`}
               {...register("title", {
                 required: "Title is required",
                 maxLength: {
@@ -156,6 +155,8 @@ function PostForm({ post }) {
                 });
               }}
             />
+            {errors.slug && <Error {...errors.slug} />}
+
             <RTE
               label="Content :"
               name="content"
@@ -165,7 +166,7 @@ function PostForm({ post }) {
             />
             {errors.content && <Error {...errors.content} />}
           </div>
-          <div className="w-1/3 px-2">
+          <div className="flex-1 px-2">
             <FileUploader
               label="Featured Image :"
               name="featuredImage"
@@ -178,8 +179,12 @@ function PostForm({ post }) {
               <div className="w-full mb-4">
                 <img
                   src={`${currentImage}`}
-                  alt={post.title}
-                  className="rounded-lg"
+                  alt="Featured Image"
+                  className="rounded-lg w-full object-cover"
+                  onError={(e) => {
+                    e.target.src = "/broken.webp";
+                    e.target.alt = "Featured Image Broken";
+                  }}
                 />
               </div>
             )}
@@ -191,9 +196,9 @@ function PostForm({ post }) {
             />
             <Button
               type="submit"
+              bgColor="blue"
               disabled={isLoading}
-              bgColor={post ? "bg-green-600" : "bg-blue-600"}
-              className={`${isLoading && "bg-opacity-60"} w-full`}
+              className="w-full"
             >
               {getButtonText()}
             </Button>

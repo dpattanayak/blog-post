@@ -55,7 +55,7 @@ export class AuthService {
 
   async deleteAccount() {
     try {
-      // Todo using functions
+      // Todo using functions delete user and profile
     } catch (error) {
       console.log("Appwrite service :: deleteAccount :: error", error);
     }

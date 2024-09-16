@@ -11,6 +11,7 @@ function DropDownMenu() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
+  const profileState = useSelector((state) => state.auth.profile);
   const themeState = useSelector((state) => state.theme.selectedTheme);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -60,17 +61,19 @@ function DropDownMenu() {
         <div className="flex items-center">
           <div
             className={`w-8 h-8 rounded-full ${
-              userData.profilePic &&
+              profileState?.profilePic &&
               "border border-gray-400 dark:border-gray-600"
             } bg-cover bg-center flex items-center justify-center text-white font-bold`}
             style={{
-              backgroundImage: userData.profilePic
-                ? `url(${userData.profilePic})`
+              backgroundImage: profileState?.profilePic
+                ? `url(${profileState.href})`
                 : "none",
-              backgroundColor: userData.profilePic ? "transparent" : "gray",
+              backgroundColor: profileState?.profilePic
+                ? "transparent"
+                : "gray",
             }}
           >
-            {!userData.profilePic &&
+            {!profileState?.profilePic &&
               userData.name
                 .split(" ")
                 .map((word) => word[0])

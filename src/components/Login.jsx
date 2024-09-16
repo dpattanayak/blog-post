@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../services";
-import { login as storeLogin } from "../store/authSlice";
+import { auth, database, storage } from "../services";
+import { profile, login as storeLogin } from "../store/authSlice";
 import { Button, Error, Input, Logo } from "./index";
 
 function Login() {
@@ -22,7 +22,15 @@ function Login() {
     const session = await auth.login(data);
     if (session || session?.type == "user_session_already_exists") {
       const userData = await auth.getCurrentUser();
-      if (userData) dispatch(storeLogin(userData));
+      if (userData) {
+        database.getProfile(userData.$id).then((data) => {
+          if (data?.profilePic) {
+            const file = storage.getFilePreview(data.profilePic);
+            dispatch(profile({ ...data, href: file.href }));
+          }
+        });
+        dispatch(storeLogin(userData));
+      }
       navigate("/");
       setIsLoading(false);
     }
