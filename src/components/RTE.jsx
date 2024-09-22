@@ -42,12 +42,26 @@ export default function RTE({
                 "media",
                 "table",
                 "code",
+                "codesample",
                 "help",
                 "wordcount",
                 "anchor",
+                "emoticons",
+              ],
+              codesample_languages: [
+                { text: "HTML/XML", value: "markup" },
+                { text: "JavaScript", value: "javascript" },
+                { text: "CSS", value: "css" },
+                { text: "PHP", value: "php" },
+                { text: "Ruby", value: "ruby" },
+                { text: "Python", value: "python" },
+                { text: "Java", value: "java" },
+                { text: "C", value: "c" },
+                { text: "C#", value: "csharp" },
+                { text: "C++", value: "cpp" },
               ],
               toolbar:
-                "undo redo | blocks | image | bold italic forecolor | alignleft aligncenter bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent |removeformat | help",
+                "undo redo | blocks | image emoticons codesample | bold italic forecolor | alignleft aligncenter bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent |removeformat | help",
               content_style:
                 "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
             }}

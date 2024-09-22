@@ -112,7 +112,7 @@ export class DBService {
   async upsertProfile(data) {
     let databaseId = config.appWriteDatabaseId;
     let collectionId = config.appWriteUserCollectionId;
-    let { $id, profilePic } = data;
+    let { $id, profilePic, name } = data;
 
     try {
       const document = await this.databases.getDocument(
@@ -128,6 +128,7 @@ export class DBService {
           {
             user_id: $id,
             profilePic,
+            name,
           }
         );
         return updatedDocument;
@@ -142,6 +143,7 @@ export class DBService {
             {
               user_id: $id,
               profilePic,
+              name,
             }
           );
           return newDocument;

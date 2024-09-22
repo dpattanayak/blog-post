@@ -133,7 +133,7 @@ function Profile({ profileData }) {
               <div className="flex flex-col md:flex-row justify-center items-center mt-4 space-y-4 md:space-y-0 md:space-x-4">
                 <Button
                   type="button"
-                  bgColor="red"
+                  bgColor="gray"
                   disabled={isLoading}
                   onClick={() => navigate("/")}
                 >

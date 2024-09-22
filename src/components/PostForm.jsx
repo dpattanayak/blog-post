@@ -129,8 +129,8 @@ function PostForm({ post }) {
               {...register("title", {
                 required: "Title is required",
                 maxLength: {
-                  value: 36,
-                  message: "Title must be at most 36 characters long",
+                  value: 100,
+                  message: "Title must be at most 100 characters long",
                 },
                 pattern: {
                   value: /^[a-zA-Z0-9][a-zA-Z0-9._-\s]*$/,

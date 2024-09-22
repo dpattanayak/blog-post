@@ -1,13 +1,16 @@
-import parse from "html-react-parser";
-import React, { useEffect, useState } from "react";
-import { FaClock } from "react-icons/fa";
+import Prism from "prismjs";
+import "prismjs/themes/prism.css";
+import React, { useEffect, useRef, useState } from "react";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button, Container, Loading } from "../components";
+import { useNavigate, useParams } from "react-router-dom";
+import "../App.css";
+import { Container, Loading, ProfilePic } from "../components";
 import { database, storage } from "../services";
-import { activeBGImage, removePost } from "../store/postSlice";
+import { activeBGImage, removePost, updatePost } from "../store/postSlice";
 
 export default function Post() {
+  const ref = useRef(null);
   const [post, setPost] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -24,10 +27,10 @@ export default function Post() {
     if (slug && postState.length) {
       if (activePost) {
         if (activePost?.$id !== bgImage?.$id) {
-          setPost(activePost);
+          setAuthorInfo(activePost);
           setBGImage(activePost);
         } else {
-          setPost(activePost);
+          setAuthorInfo(activePost);
           setIsLoading(false);
           setBackgroundImage(bgImage.href);
         }
@@ -35,12 +38,39 @@ export default function Post() {
     } else {
       database.getPost(slug).then((post) => {
         if (post) {
-          setPost(post);
+          setAuthorInfo(post);
           setBGImage(post);
         } else navigate("/");
       });
     }
   }, [slug, navigate]);
+
+  useEffect(() => {
+    highlightCodeBlocks();
+    if (ref.current) {
+      ref.current
+        .querySelectorAll('pre[class*="language-"], code[class*="language-"]')
+        .forEach((pre) => {
+          pre.className = "";
+        });
+    }
+  }, [post]);
+
+  const setAuthorInfo = (post) => {
+    if (!post?.author) {
+      database.getProfile(post.userid).then((data) => {
+        const file = storage.getFilePreview(data.profilePic);
+        const authorData = {
+          name: data.name,
+          profilePic: file.href,
+        };
+        setPost({ ...post, author: authorData });
+        dispatch(
+          updatePost({ $id: post.$id, body: { ...post, author: authorData } })
+        );
+      });
+    } else setPost(post);
+  };
 
   const setBGImage = ({ $id, featuredImage }) => {
     const bgImage = storage.getFilePreview(featuredImage);
@@ -61,11 +91,29 @@ export default function Post() {
     });
   };
 
-  const getAuthorName = (author) => {
-    return author
-      .split(" ")
-      .map((word) => word[0])
-      .join("");
+  const highlightCodeBlocks = () => {
+    Prism.highlightAll();
+    document.querySelectorAll("pre").forEach((block) => {
+      if (!block.querySelector(".copy-btn")) {
+        const copyButton = document.createElement("button");
+        copyButton.textContent = "Copy";
+        copyButton.className = "copy-btn";
+        copyButton.onclick = () => {
+          const code = block.querySelector("code").innerText;
+          navigator.clipboard.writeText(code).then(() => {
+            copyButton.innerText = "Copied!";
+            setTimeout(() => (copyButton.innerText = "Copy"), 2000);
+          });
+        };
+
+        copyButton.style.position = "absolute";
+        copyButton.style.top = "10px";
+        copyButton.style.right = "10px";
+
+        block.style.position = "relative";
+        block.appendChild(copyButton);
+      }
+    });
   };
 
   if (isLoading) return <Loading />;
@@ -73,61 +121,49 @@ export default function Post() {
     return (
       post && (
         <Container className="mx-auto max-w-screen-xl prose dark:prose-invert">
-          <div className="w-full mb-6 flex flex-row justify-between items-start">
-            <h1 className="font-bold text-lg sm:text-xl mb-4 sm:mb-0">
-              {post.title}
-            </h1>
-            {isAuthor && (
-              <div className="flex flex-row justify-between gap-2 sm:gap-4">
-                <Link to={`/edit-post/${post.$id}`}>
-                  <Button bgColor="blue" className="w-full sm:w-auto">
-                    Edit
-                  </Button>
-                </Link>
-                <Button
-                  bgColor="red"
-                  onClick={deletePost}
-                  className="w-full sm:w-auto"
-                >
-                  Delete
-                </Button>
-              </div>
-            )}
-          </div>
-          <div className="py-8 overflow-auto">
+          <div className="overflow-auto">
             <div
-              className="min-h-[130px] sm:min-h-[200px] md:min-h-[500px] h-full rounded-md bg-cover bg-center border mb-8 bg-slate-400 border-[#f1f1f1] dark:border-[#2d2d2d]"
+              className="min-h-[200px] sm:min-h-[400px] h-full bg-cover bg-center border mb-8 bg-slate-400 border-[#f1f1f161] dark:border-[#2d2d2d88]"
               style={{
                 backgroundImage: `url(${backgroundImage}), url('/broken.webp')`,
               }}
             ></div>
-            <div className="browser-css">{parse(post.content)}</div>
-
-            <div className="flex justify-between items-center border-t border-t-gray-500 dark:border-t-gray-50 pt-4 mt-4 text-text-light/60 dark:text-text-dark/60">
-              {/* Author Info */}
+            <div className="flex items-center justify-between w-full px-[20px]">
               <div className="flex items-center space-x-2">
-                {post?.profilePic ? (
-                  <img
-                    src={post.profilePic}
-                    alt={post.author}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-500 text-white flex items-center justify-center">
-                    <span className="font-bold">
-                      {getAuthorName(post?.author || "Unknown Author")}
-                    </span>
-                  </div>
-                )}
-                <span>{post?.author || "Unknown Author"}</span>
+                <ProfilePic
+                  name={post.author?.name}
+                  profilePic={post?.author?.profilePic}
+                  date={post?.$updatedAt}
+                />
               </div>
 
-              {/* Post Updated Info */}
-              <div className="flex items-center space-x-2">
-                <FaClock />
-                <span>{new Date(post.$updatedAt).toLocaleDateString()}</span>
-              </div>
+              {isAuthor && (
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => navigate(`/edit-post/${post.$id}`)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    <FaEdit size={25} />
+                  </button>
+                  <button
+                    onClick={deletePost}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <FaTrash size={25} />
+                  </button>
+                </div>
+              )}
             </div>
+
+            <div className="mx-4 my-8 dark:text-text-dark/60 text-text-light/60">
+              <h1 className="font-light">{post.title}</h1>
+            </div>
+
+            <div
+              ref={ref}
+              className="p-6"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
           </div>
         </Container>
       )

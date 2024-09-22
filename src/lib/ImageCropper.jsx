@@ -207,7 +207,7 @@ function ImageCropper({
           </div>
           {/* Upload and Cancel buttons */}
           <div className="flex flex-col md:flex-row justify-center items-center mt-4 space-y-4 md:space-y-0 md:space-x-4">
-            <Button type="button" bgColor="red" onClick={onCancel}>
+            <Button type="button" bgColor="gray" onClick={onCancel}>
               Cancel
             </Button>
 

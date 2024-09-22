@@ -9,11 +9,18 @@ function Button({
   disabled = false,
   ...rest
 }) {
+  const getBgClass = () => {
+    const baseColor = disabled ? "800" : "600";
+    return `bg-${bgColor}-${baseColor} ${disabled ? "bg-opacity-60" : ""}`;
+  };
+
+  const getHoverClass = () => {
+    return !disabled ? `hover:bg-${bgColor}-700` : "";
+  };
+
   return (
     <button
-      className={`px-4 py-2 rounded-lg w-full hover:bg-${bgColor}-700 ${
-        disabled ? `bg-${bgColor}-800 bg-opacity-60` : `bg-${bgColor}-600`
-      } ${textColor} ${className}`}
+      className={`px-4 py-2 rounded-lg w-full ${getBgClass()} ${getHoverClass()} ${textColor} ${className}`}
       {...rest}
     >
       {children}

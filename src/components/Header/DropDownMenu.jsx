@@ -6,6 +6,7 @@ import { auth } from "../../services";
 import { logout } from "../../store/authSlice";
 import { resetState } from "../../store/postSlice";
 import { toggleTheme } from "../../store/themeSlice";
+import { ProfilePic } from "../index";
 
 function DropDownMenu() {
   const dispatch = useDispatch();
@@ -59,27 +60,7 @@ function DropDownMenu() {
         className="text-text-light dark:text-text-dark font-semibold py-2 px-4 rounded inline-flex items-center"
       >
         <div className="flex items-center">
-          <div
-            className={`w-8 h-8 rounded-full ${
-              profileState?.profilePic &&
-              "border border-gray-400 dark:border-gray-600"
-            } bg-cover bg-center flex items-center justify-center text-white font-bold`}
-            style={{
-              backgroundImage: profileState?.profilePic
-                ? `url(${profileState.href})`
-                : "none",
-              backgroundColor: profileState?.profilePic
-                ? "transparent"
-                : "gray",
-            }}
-          >
-            {!profileState?.profilePic &&
-              userData.name
-                .split(" ")
-                .map((word) => word[0])
-                .join("")}
-          </div>
-          <span className="ml-2">{userData.name}</span>
+          <ProfilePic name={userData.name} profilePic={profileState?.href} />
           <svg
             className="fill-current h-4 w-4 ml-2"
             xmlns="http://www.w3.org/2000/svg"

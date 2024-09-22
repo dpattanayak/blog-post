@@ -1,0 +1,21 @@
+.copy-btn {
+  background: #27272ad9;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: #0056b3;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: none !important;
+  background: none !important;
+}

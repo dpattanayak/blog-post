@@ -16,6 +16,7 @@ import PostForm from "./PostForm";
 import Profile from "./Profile";
 import RTE from "./RTE";
 import Signup from "./Signup";
+import ProfilePic from "./Utils/ProfilePic";
 
 import Button from "./Utils/Button";
 import Error from "./Utils/Error";
@@ -43,6 +44,7 @@ export {
   PostCard,
   PostForm,
   Profile,
+  ProfilePic,
   ProgressBar,
   RTE,
   Select,
