@@ -19,3 +19,24 @@
   color: none !important;
   background: none !important;
 }
+
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background-color: #00000026;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+.dark
+  .prose
+  :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background-color: #e5e7eb26;
+}
+
+/* Remove the backticks added using ::before or ::after */
+.prose :where(code)::before,
+.prose :where(code)::after {
+  content: none !important;
+}

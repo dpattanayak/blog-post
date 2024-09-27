@@ -1,5 +1,5 @@
 import Prism from "prismjs";
-import "prismjs/themes/prism.css";
+import "prismjs/themes/prism-okaidia.css";
 import React, { useEffect, useRef, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -51,7 +51,7 @@ export default function Post() {
       ref.current
         .querySelectorAll('pre[class*="language-"], code[class*="language-"]')
         .forEach((pre) => {
-          pre.className = "";
+          pre.className = "my-2";
         });
     }
   }, [post]);
@@ -95,25 +95,62 @@ export default function Post() {
     Prism.highlightAll();
     document.querySelectorAll("pre").forEach((block) => {
       if (!block.querySelector(".copy-btn")) {
-        const copyButton = document.createElement("button");
-        copyButton.textContent = "Copy";
-        copyButton.className = "copy-btn";
-        copyButton.onclick = () => {
-          const code = block.querySelector("code").innerText;
-          navigator.clipboard.writeText(code).then(() => {
-            copyButton.innerText = "Copied!";
-            setTimeout(() => (copyButton.innerText = "Copy"), 2000);
-          });
-        };
+        const codeBlock = block.querySelector("code");
+        const language = codeBlock.className.match(/language-([a-z]+)/i);
+        if (language?.length) {
+          const languageLabel =
+            language[1].charAt(0).toUpperCase() + language[1].slice(1);
+          const codeContent = codeBlock.innerText;
 
-        copyButton.style.position = "absolute";
-        copyButton.style.top = "10px";
-        copyButton.style.right = "10px";
+          // Create the outer wrapper div
+          const wrapperDiv = document.createElement("div");
+          wrapperDiv.className = "bg-bg-dark p-4 rounded-md";
 
-        block.style.position = "relative";
-        block.appendChild(copyButton);
+          // Create the header div
+          const headerDiv = document.createElement("div");
+          headerDiv.className = "flex justify-between mb-2";
+
+          // Create the language label
+          const languageSpan = document.createElement("span");
+          languageSpan.className = "text-gray-500";
+          languageSpan.textContent = languageLabel;
+
+          // Create the copy button
+          const copyButton = document.createElement("button");
+          copyButton.textContent = "Copy";
+          copyButton.className = "bg-gray-800 px-3 rounded-md";
+          copyButton.onclick = () => {
+            navigator.clipboard.writeText(codeContent).then(() => {
+              copyButton.innerText = "Copied!";
+              setTimeout(() => (copyButton.innerText = "Copy"), 2000);
+            });
+          };
+
+          // Assemble the header
+          headerDiv.appendChild(languageSpan);
+          headerDiv.appendChild(copyButton);
+          wrapperDiv.appendChild(headerDiv);
+
+          // Create pre and new code elements
+          const preElement = document.createElement("pre");
+          const newCodeElement = document.createElement("code");
+          newCodeElement.className = codeBlock.className; // Use the original class
+          newCodeElement.textContent = codeContent;
+
+          preElement.appendChild(newCodeElement);
+          wrapperDiv.appendChild(preElement);
+
+          // Insert the new structure into the DOM
+          block.parentNode.insertBefore(wrapperDiv, block);
+          block.remove();
+        }
       }
     });
+
+    // Re-initialize syntax highlighting
+    if (typeof Prism !== "undefined") {
+      Prism.highlightAll();
+    }
   };
 
   if (isLoading) return <Loading />;
