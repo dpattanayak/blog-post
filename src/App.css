@@ -35,6 +35,10 @@
   background-color: #e5e7eb26;
 }
 
+.dark .prose pre code {
+  background-color: transparent;
+}
+
 /* Remove the backticks added using ::before or ::after */
 .prose :where(code)::before,
 .prose :where(code)::after {
