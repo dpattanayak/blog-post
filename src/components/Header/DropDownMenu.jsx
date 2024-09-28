@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaMoon, FaSignOutAlt, FaSun, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../../services";
 import { logout } from "../../store/authSlice";
 import { resetState } from "../../store/postSlice";
@@ -17,6 +17,7 @@ function DropDownMenu() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const location = useLocation();
   const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
@@ -37,7 +38,9 @@ function DropDownMenu() {
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [navigate]);
+
+  useEffect(() => setIsOpen(false), [location, darkMode]);
 
   useEffect(() => {
     const HTML = document.querySelector("html").classList;

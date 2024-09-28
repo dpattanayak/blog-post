@@ -41,9 +41,9 @@ function Home() {
 
   return (
     <Container className="mx-auto max-w-screen-xl">
-      <div className="w-full py-8">
+      <div className="w-full">
         {posts && posts.length > 0 ? (
-          <div className="flex flex-wrap justify-center sm:justify-start">
+          <div className="flex flex-wrap justify-center sm:justify-start m-4">
             {posts.map((post) => (
               <div
                 key={post.$id}

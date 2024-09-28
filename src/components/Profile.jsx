@@ -66,9 +66,9 @@ function Profile({ profileData }) {
   };
 
   return (
-    <div className="flex items-center justify-center py-8 h-[85vh]">
+    <div className="flex items-center justify-center py-8">
       <div
-        className={`mx-auto w-full max-w-screen-sm bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-10 border border-black/10 transition duration-200 z-50`}
+        className={`m-4 w-full max-w-lg bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-6 md:p-10 border border-black/10 transition duration-200 z-10`}
       >
         <h2 className="text-center text-2xl font-bold leading-tight">
           Profile Settings

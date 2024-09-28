@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "../components";
 import { auth } from "../services";
@@ -10,6 +10,8 @@ function AuthGuard({ children, authentication = true }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const authStatus = useSelector((state) => state.auth.status);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (authentication && authStatus !== authentication) {
       auth.logout().then(() => {

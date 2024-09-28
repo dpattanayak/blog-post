@@ -116,13 +116,13 @@ function PostForm({ post }) {
   return (
     <Container className="mx-auto max-w-screen-xl">
       <div
-        className={`bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-10 border border-black/10 transition duration-200`}
+        className={`bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-4 border border-black/10 transition duration-200`}
       >
         <form
           onSubmit={handleSubmit(submit)}
           className="flex flex-col gap-4 md:flex-row md:gap-6"
         >
-          <div className="flex-1 px-2">
+          <div className="flex-1">
             <Input
               label="Title :"
               placeholder="Title"
@@ -138,6 +138,7 @@ function PostForm({ post }) {
                     "Title can only contain alphanumeric characters, periods, hyphens, and underscores, and cannot start with a special character.",
                 },
               })}
+              className="mb-4"
             />
             {errors.title && <Error {...errors.title} />}
 
@@ -166,7 +167,7 @@ function PostForm({ post }) {
             />
             {errors.content && <Error {...errors.content} />}
           </div>
-          <div className="flex-1 px-2">
+          <div className="flex-1">
             <FileUploader
               label="Featured Image :"
               name="featuredImage"

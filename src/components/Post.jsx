@@ -51,7 +51,8 @@ export default function Post() {
       ref.current
         .querySelectorAll('pre[class*="language-"], code[class*="language-"]')
         .forEach((pre) => {
-          pre.className = "my-2";
+          if (pre.localName == "pre") pre.className = "codeBlock";
+          else pre.className = "";
         });
     }
   }, [post]);
@@ -104,11 +105,11 @@ export default function Post() {
 
           // Create the outer wrapper div
           const wrapperDiv = document.createElement("div");
-          wrapperDiv.className = "bg-bg-dark p-4 rounded-md";
+          wrapperDiv.className = "bg-bg-dark rounded-md";
 
           // Create the header div
           const headerDiv = document.createElement("div");
-          headerDiv.className = "flex justify-between mb-2";
+          headerDiv.className = "flex justify-between p-2";
 
           // Create the language label
           const languageSpan = document.createElement("span");
@@ -198,7 +199,7 @@ export default function Post() {
 
             <div
               ref={ref}
-              className="p-6"
+              className="p-6 dark:bg-bg-dark/60 bg-bg-light/60 rounded-md m-4"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>

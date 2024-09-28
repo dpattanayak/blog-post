@@ -44,3 +44,8 @@
 .prose :where(code)::after {
   content: none !important;
 }
+
+.codeBlock {
+  margin: 0px !important;
+  border-radius: 0px 0px 0.375rem 0.375rem !important;
+}
