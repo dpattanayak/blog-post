@@ -1,4 +1,5 @@
 import AuthGuard from "./AuthGuard";
+import Carousel from "./Carousel";
 import Container from "./Container";
 import FallBackPage from "./FallBackPage";
 import FileUploader from "./FileUploader";
@@ -7,6 +8,7 @@ import DropDownMenu from "./Header/DropDownMenu";
 import Header from "./Header/Header";
 import LogoutButton from "./Header/LogoutButton";
 import Hero from "./Hero";
+import HeroBanner from "./HeroBanner";
 import Loading from "./Loading";
 import Login from "./Login";
 import Logo from "./Logo";
@@ -27,6 +29,7 @@ import Select from "./Utils/Select";
 export {
   AuthGuard,
   Button,
+  Carousel,
   Container,
   DropDownMenu,
   Error,
@@ -35,6 +38,7 @@ export {
   Footer,
   Header,
   Hero,
+  HeroBanner,
   Input,
   Loading,
   Login,

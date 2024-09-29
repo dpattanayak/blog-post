@@ -115,7 +115,7 @@ function PostForm({ post }) {
 
   return (
     <Container className="mx-auto max-w-screen-xl">
-      <div
+      <section
         className={`bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-4 border border-black/10 transition duration-200`}
       >
         <form
@@ -205,7 +205,7 @@ function PostForm({ post }) {
             </Button>
           </div>
         </form>
-      </div>
+      </section>
     </Container>
   );
 }

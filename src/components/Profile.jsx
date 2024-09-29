@@ -66,7 +66,7 @@ function Profile({ profileData }) {
   };
 
   return (
-    <div className="flex items-center justify-center py-8">
+    <section className="flex items-center justify-center py-8">
       <div
         className={`m-4 w-full max-w-lg bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark rounded-xl p-6 md:p-10 border border-black/10 transition duration-200 z-10`}
       >
@@ -152,7 +152,7 @@ function Profile({ profileData }) {
           </div>
         </form>
       </div>
-    </div>
+    </section>
   );
 }
 

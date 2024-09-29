@@ -1,6 +1,6 @@
 import React from "react";
 
-function ProfilePic({ name = "Unknown Author", profilePic, date }) {
+function ProfilePic({ name = "Unknown Author", profilePic, date, isBanner }) {
   const getInitials = (name) => {
     const initials = name
       .split(" ")
@@ -28,26 +28,51 @@ function ProfilePic({ name = "Unknown Author", profilePic, date }) {
 
   return (
     <>
-      <div
-        className={`w-8 h-8 rounded-full ${
-          profilePic && "border border-gray-400 dark:border-gray-600"
-        } bg-cover bg-center flex items-center justify-center text-white font-bold`}
-        style={{
-          backgroundImage: profilePic ? `url(${profilePic})` : "none",
-          backgroundColor: profilePic ? "transparent" : "gray",
-        }}
-      >
-        {!profilePic && getInitials(name)}
-      </div>
-      {!date ? (
-        <span className="ml-2">{name}</span>
+      {isBanner ? (
+        <>
+          <div className="absolute bottom-3 text-xs text-text-light/40 dark:text-text-dark/40">
+            <div className="flex gap-1 items-center">
+              <div
+                className={`w-5 h-5 rounded-full ${
+                  profilePic && "border border-gray-400 dark:border-gray-600"
+                } bg-cover bg-center flex items-center justify-center text-white font-bold text-[10px]`}
+                style={{
+                  backgroundImage: profilePic ? `url(${profilePic})` : "none",
+                  backgroundColor: profilePic ? "transparent" : "gray",
+                }}
+              >
+                {!profilePic && getInitials(name)}
+              </div>
+              <span>
+                {name} . {formatTime(date)}
+              </span>
+            </div>
+          </div>
+        </>
       ) : (
-        <div className="flex flex-col">
-          <span className="font-bold text-base">{name}</span>
-          <small className="text-gray-500 dark:text-gray-400">
-            {formatTime(date)}
-          </small>
-        </div>
+        <>
+          <div
+            className={`w-8 h-8 rounded-full ${
+              profilePic && "border border-gray-400 dark:border-gray-600"
+            } bg-cover bg-center flex items-center justify-center text-white font-bold`}
+            style={{
+              backgroundImage: profilePic ? `url(${profilePic})` : "none",
+              backgroundColor: profilePic ? "transparent" : "gray",
+            }}
+          >
+            {!profilePic && getInitials(name)}
+          </div>
+          {!date ? (
+            <span className="ml-2">{name}</span>
+          ) : (
+            <div className="flex flex-col">
+              <span className="font-bold text-base">{name}</span>
+              <small className="text-gray-500 dark:text-gray-400">
+                {formatTime(date)}
+              </small>
+            </div>
+          )}
+        </>
       )}
     </>
   );

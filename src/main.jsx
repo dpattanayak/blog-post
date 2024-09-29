@@ -51,11 +51,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/post/:slug",
-        element: (
-          <AuthGuard authentication>
-            <Post />
-          </AuthGuard>
-        ),
+        element: <Post />,
       },
       {
         path: "/profile",

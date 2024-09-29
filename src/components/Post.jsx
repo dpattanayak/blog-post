@@ -159,7 +159,7 @@ export default function Post() {
     return (
       post && (
         <Container className="mx-auto max-w-screen-xl prose dark:prose-invert">
-          <div className="overflow-auto">
+          <section className="overflow-auto">
             <div
               className="min-h-[200px] sm:min-h-[400px] h-full bg-cover bg-center border mb-8 bg-slate-400 border-[#f1f1f161] dark:border-[#2d2d2d88]"
               style={{
@@ -202,7 +202,7 @@ export default function Post() {
               className="p-6 dark:bg-bg-dark/60 bg-bg-light/60 rounded-md m-4"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
-          </div>
+          </section>
         </Container>
       )
     );
