@@ -79,38 +79,12 @@ export default function Header() {
               isMenuOpen ? "block" : "hidden"
             } lg:flex gap-2`}
           >
-            {/* <button
-              onClick={toggleDarkMode}
-              className="flex w-full px-4 py-2 hover:bg-hover-light dark:hover:bg-hover-dark items-center"
-            >
-              {darkMode ? (
-                <FaMoon className="mr-2" onClick={toggleDarkMode} />
-              ) : (
-                <FaSun className="mr-2" onClick={toggleDarkMode} />
-              )}
-
-              <span className="duration-200 ease-in">
-                {darkMode ? "Dark Mode" : "Light Mode"}
-              </span>
-              <div
-                className={`relative inline-block w-8 h-4 ml-2 align-middle select-none transition duration-200 ease-in rounded-full ${
-                  darkMode ? "bg-blue-600" : "bg-gray-400"
-                }`}
-              >
-                <span
-                  className={`absolute block w-4 h-4 bg-white border-2 border-gray-300 rounded-full transform transition-transform duration-200 ease-in ${
-                    darkMode ? "translate-x-4" : "translate-x-0"
-                  }`}
-                ></span>
-              </div>
-            </button> */}
-
             {!authStatus && (
               <button onClick={toggleDarkMode} className="h-10">
                 {darkMode ? (
-                  <FaMoon className="mr-2" />
+                  <FaMoon className="mr-2 animate-spin-once" />
                 ) : (
-                  <FaSun className="mr-2" />
+                  <FaSun className="mr-2 animate-spin-once" />
                 )}
               </button>
             )}

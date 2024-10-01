@@ -30,6 +30,15 @@ export default {
           light: "#c4c2c1",
         },
       },
+      keyframes: {
+        spinOnce: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
+      animation: {
+        "spin-once": "spinOnce 0.5s linear",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],

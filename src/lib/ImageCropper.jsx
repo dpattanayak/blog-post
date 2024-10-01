@@ -35,8 +35,6 @@ function ImageCropper({
 }) {
   const previewCanvasRef = useRef(null);
   const imgRef = useRef(null);
-  const hiddenAnchorRef = useRef(null);
-  const blobUrlRef = useRef("");
   const [crop, setCrop] = useState(initialCrop);
   const [completedCrop, setCompletedCrop] = useState(null);
   const [scale, setScale] = useState(1);
@@ -207,7 +205,12 @@ function ImageCropper({
           </div>
           {/* Upload and Cancel buttons */}
           <div className="flex flex-col md:flex-row justify-center items-center mt-4 space-y-4 md:space-y-0 md:space-x-4">
-            <Button type="button" bgColor="gray" onClick={onCancel}>
+            <Button
+              type="button"
+              bgColor="gray"
+              onClick={onCancel}
+              className="bg-gray-600"
+            >
               Cancel
             </Button>
 

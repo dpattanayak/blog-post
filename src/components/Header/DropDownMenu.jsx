@@ -99,9 +99,9 @@ function DropDownMenu() {
                 className="flex w-full px-4 py-2 hover:bg-hover-light dark:hover:bg-hover-dark items-center"
               >
                 {darkMode ? (
-                  <FaMoon className="mr-2" />
+                  <FaMoon className="mr-2 animate-spin-once" />
                 ) : (
-                  <FaSun className="mr-2" />
+                  <FaSun className="mr-2 animate-spin-once" />
                 )}
 
                 <span className="duration-200 ease-in">

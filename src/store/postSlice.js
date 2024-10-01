@@ -22,6 +22,11 @@ const postSlice = createSlice({
       state.posts = state.posts.map((post) => {
         return post.$id === $id ? { ...post, ...body } : post;
       });
+
+      // Sort the posts by $updatedAt field in descending order
+      state.posts.sort(
+        (a, b) => new Date(b.$updatedAt) - new Date(a.$updatedAt)
+      );
     },
 
     removePost: (state, action) => {

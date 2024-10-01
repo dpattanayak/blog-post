@@ -88,7 +88,7 @@ export class DBService {
       return await this.databases.listDocuments(
         config.appWriteDatabaseId,
         config.appWriteArticleCollectionId,
-        [Query.equal("isActive", true), Query.orderAsc("title")]
+        [Query.equal("isActive", true), Query.orderDesc("$updatedAt")]
       );
     } catch (error) {
       console.log("Appwrite service :: getPosts :: error", error);
