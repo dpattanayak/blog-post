@@ -5,30 +5,28 @@ import { storage } from "../services";
 
 const previewCache = new Map();
 
-const usePreviewUrl = (fileId) => {
-  const [previewUrl, setPreviewUrl] = useState(null);
-
-  useEffect(() => {
-    if (!fileId) return;
-
+const fetchPreviewUrls = async (featuredItems) => {
+  const urls = {};
+  for (const item of featuredItems) {
+    const fileId = item.featuredImage;
     if (previewCache.has(fileId)) {
-      setPreviewUrl(previewCache.get(fileId));
+      urls[fileId] = previewCache.get(fileId);
     } else {
-      const url = storage.getFilePreview(fileId, {
+      const url = await storage.getFilePreview(fileId, {
         width: 800,
         height: 400,
       });
-      setPreviewUrl(url);
       previewCache.set(fileId, url);
+      urls[fileId] = url;
     }
-  }, [fileId]);
-
-  return previewUrl;
+  }
+  return urls;
 };
 
 const Carousel = ({ posts }) => {
   const featuredItems = posts?.slice(0, 5) || [];
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [previewUrls, setPreviewUrls] = useState({});
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,6 +35,20 @@ const Carousel = ({ posts }) => {
 
     return () => clearInterval(interval);
   }, [featuredItems.length]);
+
+  useEffect(() => {
+    if (featuredItems.length > 0) {
+      // Avoid fetching if the preview URLs are already set for the current items
+      const cachedUrls = featuredItems.map((item) =>
+        previewCache.get(item.featuredImage)
+      );
+      if (cachedUrls.some((url) => !url)) {
+        fetchPreviewUrls(featuredItems).then((urls) => {
+          setPreviewUrls(urls);
+        });
+      }
+    }
+  }, [featuredItems]);
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
@@ -56,10 +68,10 @@ const Carousel = ({ posts }) => {
   if (featuredItems.length === 0) return null;
 
   return (
-    <Container className="mx-auto max-w-screen-xl">
-      <section className="relative w-full min-h-56 md:min-h-96 overflow-hidden bg-bg-dark/60 rounded-md">
+    <Container className="mx-auto max-w-screen-xl mt-8">
+      <section className="relative w-full min-h-56 md:min-h-96 overflow-hidden bg-bg-dark/60">
         {featuredItems.map((item, index) => {
-          const previewUrl = usePreviewUrl(item.featuredImage);
+          const previewUrl = previewUrls[item.featuredImage];
           const isActive = index === currentIndex;
 
           return (
@@ -73,7 +85,7 @@ const Carousel = ({ posts }) => {
             >
               {previewUrl && (
                 <img
-                  src={previewUrl}
+                  src={previewUrl.href}
                   alt={item.title}
                   className="w-full h-full object-cover rounded-sm"
                 />

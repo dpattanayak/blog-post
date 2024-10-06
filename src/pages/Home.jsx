@@ -20,6 +20,11 @@ function Home() {
   const dispatch = useDispatch();
 
   const fetchDocuments = async () => {
+    if (postState?.length) {
+      const lastDoc = postState[postState.length - 1];
+      setCursor(lastDoc.$id);
+    }
+
     setIsLoading(true);
 
     try {
@@ -40,8 +45,7 @@ function Home() {
 
         const lastDoc = documents[documents.length - 1];
         setCursor(lastDoc.$id);
-
-        dispatch(allPosts([...postState, ...documents]));
+        setAuthorInfo(documents);
       } else {
         setHasMore(false);
       }
@@ -54,22 +58,10 @@ function Home() {
 
   useEffect(() => {
     if (!authStatus && !postState.length) {
-      setIsLoading(true);
-      database
-        .getPosts({ limit: 10, cursorAfter: null })
-        .then(({ documents }) => {
-          if (documents) {
-            setPosts(documents);
-            setAuthorInfo(documents);
-          }
-        })
-        .finally(setIsLoading(false));
+      fetchDocuments();
     } else {
-      if (postState?.length) {
-        const lastDoc = postState[postState.length - 1];
-        setCursor(lastDoc.$id);
-      }
-      if (authStatus) fetchDocuments();
+      if (!postState?.length) fetchDocuments();
+      else setPosts(postState);
     }
   }, [authStatus]);
 
@@ -110,7 +102,7 @@ function Home() {
     dispatch(allPosts(updatedPosts));
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading && !postState.length) return <Loading />;
 
   return (
     <Container className="md:mx-auto max-w-screen-xl">
