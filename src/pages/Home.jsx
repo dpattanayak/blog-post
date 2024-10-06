@@ -8,59 +8,114 @@ import {
   PostCard,
 } from "../components";
 import { database, storage } from "../services";
-import { allPosts, updatePost } from "../store/postSlice";
+import { allPosts } from "../store/postSlice";
 
 function Home() {
   const [posts, setPosts] = useState([]);
+  const [cursor, setCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const authStatus = useSelector((state) => state.auth.status);
   const postState = useSelector((state) => state.post.posts);
   const dispatch = useDispatch();
 
+  const fetchDocuments = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await database.getPosts({
+        limit: 25,
+        cursorAfter: cursor,
+      });
+
+      const { documents } = response;
+
+      if (documents?.length) {
+        setPosts((prevPosts) => {
+          const newPosts = documents.filter(
+            (doc) => !prevPosts.some((post) => post.$id === doc.$id)
+          );
+          return [...prevPosts, ...newPosts];
+        });
+
+        const lastDoc = documents[documents.length - 1];
+        setCursor(lastDoc.$id);
+
+        dispatch(allPosts([...postState, ...documents]));
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (!postState.length) {
+    if (!authStatus && !postState.length) {
       setIsLoading(true);
       database
-        .getPosts()
+        .getPosts({ limit: 10, cursorAfter: null })
         .then(({ documents }) => {
           if (documents) {
-            dispatch(allPosts(documents));
             setPosts(documents);
-            setIsLoading(false);
+            setAuthorInfo(documents);
           }
         })
         .finally(setIsLoading(false));
-    } else setPosts(postState);
-  }, [dispatch, postState]);
+    } else {
+      if (postState?.length) {
+        const lastDoc = postState[postState.length - 1];
+        setCursor(lastDoc.$id);
+      }
+      if (authStatus) fetchDocuments();
+    }
+  }, [authStatus]);
 
   useEffect(() => {
-    if (posts?.length && !authStatus) {
-      posts.map((post) => setAuthorInfo(post));
-    }
-  }, [posts]);
+    if (!authStatus) return;
 
-  const setAuthorInfo = (post) => {
-    if (!post?.author) {
-      database.getProfile(post.userid).then((data) => {
-        const file = storage.getFilePreview(data.profilePic);
-        const authorData = {
-          name: data.name,
-          profilePic: file.href,
-        };
-        setPosts({ ...post, author: authorData });
-        dispatch(
-          updatePost({ $id: post.$id, body: { ...post, author: authorData } })
-        );
-      });
-    } else setPosts(post);
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 200 >=
+        document.documentElement.offsetHeight
+      ) {
+        if (!isLoading && hasMore) {
+          fetchDocuments();
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [authStatus, isLoading, hasMore]);
+
+  const setAuthorInfo = async (posts) => {
+    const updatedPosts = await Promise.all(
+      posts.map(async (post) => {
+        if (!post?.author) {
+          const data = await database.getProfile(post.userid);
+          const file = storage.getFilePreview(data.profilePic);
+          const authorData = {
+            name: data.name,
+            profilePic: file.href,
+          };
+          return { ...post, author: authorData };
+        }
+        return post;
+      })
+    );
+
+    dispatch(allPosts(updatedPosts));
   };
 
   if (isLoading) return <Loading />;
 
   return (
-    <Container className="m-4 md:m-0 md:mx-auto max-w-screen-xl">
+    <Container className="md:mx-auto max-w-screen-xl">
       <div className="w-full">
-        {!authStatus && postState.length && <Hero />}
+        {!authStatus && <Hero />}
         {authStatus && postState.length ? (
           <div className="flex flex-wrap justify-center sm:justify-start m-4">
             {posts?.length &&

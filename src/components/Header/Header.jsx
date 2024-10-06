@@ -55,7 +55,7 @@ export default function Header() {
           {/* Hamburger Button for Mobile */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-text-light dark:text-text-dark"
+            className="md:hidden p-2 text-text-light dark:text-text-dark absolute right-4 top-[10px]"
           >
             <svg
               className="w-6 h-6"
@@ -75,9 +75,11 @@ export default function Header() {
 
           {/* Navigation Links */}
           <div
-            className={`flex items-center ${
-              isMenuOpen ? "block" : "hidden"
-            } lg:flex gap-2`}
+            className={`flex items-center transition-all duration-500 ${
+              isMenuOpen
+                ? "max-h-20 opacity-100 pointer-events-auto"
+                : "max-h-0 opacity-0 pointer-events-none"
+            } md:max-h-full md:opacity-100 md:pointer-events-auto lg:flex gap-2 sm:mr-[30px] md:mr-0`}
           >
             {!authStatus && (
               <button onClick={toggleDarkMode} className="h-10">
@@ -87,6 +89,16 @@ export default function Header() {
                   <FaSun className="mr-2 animate-spin-once" />
                 )}
               </button>
+            )}
+
+            {!authStatus && (
+              <a
+                className="font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 text-text-light dark:text-text-dark hover:bg-secondary-light dark:hover:bg-gray-800"
+                href="https://github.com/dpattanayak/blog-post?tab=readme-ov-file#readme-ov-file"
+                target="_blank"
+              >
+                Docs
+              </a>
             )}
 
             {navItems.map(
@@ -102,7 +114,7 @@ export default function Header() {
                           : "text-text-light dark:text-text-dark"
                       } ${
                         !authStatus &&
-                        "bg-secondary-light dark:bg-secondary-dark"
+                        "bg-secondary-light dark:bg-secondary-dark mr-4 md:mr-0"
                       } hover:bg-gray-50 dark:hover:bg-gray-800 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 focus:outline-none`
                     }
                   >

@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { Carousel, HeroBanner } from "../components";
 
 const HeroSection = () => {
@@ -15,8 +16,7 @@ const HeroSection = () => {
         <section
           className="bg-cover bg-center min-h-[85vh] flex items-center justify-center relative"
           style={{
-            backgroundImage:
-              'url("https://fastly.picsum.photos/id/184/4288/2848.jpg?hmac=l0fKWzmWf6ISTPMEm1WjRdxn35sg6U3GwZLn5lvKhTI")',
+            backgroundImage: 'url("/hero_bg.jpg")',
           }}
         >
           <div className="bg-black/40 w-full h-full absolute left-0 top-0"></div>
@@ -35,12 +35,13 @@ const HeroSection = () => {
               >
                 Get Started
               </Link>
-              <Link
-                to={"/about"}
+              <a
                 className="px-6 py-2 md:px-8 md:py-3 text-text-dark bg-bg-dark hover:bg-hover-dark font-semibold rounded transition duration-300"
+                href="https://github.com/dpattanayak/blog-post?tab=readme-ov-file#readme-ov-file"
+                target="_blank"
               >
                 Learn More
-              </Link>
+              </a>
             </div>
           </div>
         </section>

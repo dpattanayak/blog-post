@@ -60,7 +60,7 @@ function DropDownMenu() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="text-text-light dark:text-text-dark font-semibold py-2 px-4 rounded inline-flex items-center"
+        className="text-text-light dark:text-text-dark font-semibold rounded flex items-center pr-4"
       >
         <div className="flex items-center">
           <ProfilePic name={userData.name} profilePic={profileState?.href} />

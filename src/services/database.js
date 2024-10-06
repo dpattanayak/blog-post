@@ -83,12 +83,22 @@ export class DBService {
     }
   }
 
-  async getPosts() {
+  async getPosts(payload) {
     try {
+      const queries = [
+        Query.equal("isActive", true),
+        Query.orderDesc("$updatedAt"),
+      ];
+
+      if (payload) {
+        if (payload?.limit) queries.push(Query.limit(payload.limit));
+        if (payload?.cursorAfter) queries.push(Query.cursorAfter(cursorAfter));
+      }
+
       return await this.databases.listDocuments(
         config.appWriteDatabaseId,
         config.appWriteArticleCollectionId,
-        [Query.equal("isActive", true), Query.orderDesc("$updatedAt")]
+        queries
       );
     } catch (error) {
       console.log("Appwrite service :: getPosts :: error", error);
