@@ -12,8 +12,10 @@ const HeroSection = () => {
 
   return (
     <>
+      <Carousel posts={postState} />
+
       <section
-        className="bg-cover bg-center min-h-56 md:min-h-96 flex items-center justify-center relative"
+        className="bg-cover bg-center min-h-[70vh] flex items-center justify-center relative"
         style={{
           backgroundImage: 'url("/hero_bg.jpg")',
         }}
@@ -45,7 +47,6 @@ const HeroSection = () => {
         </div>
       </section>
 
-      <Carousel posts={postState} />
       <div className="w-full flex flex-col md:flex-row mt-8 gap-4">
         <HeroBanner
           className="w-full md:w-3/4"

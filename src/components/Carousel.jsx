@@ -68,7 +68,7 @@ const Carousel = ({ posts }) => {
   if (featuredItems.length === 0) return null;
 
   return (
-    <Container className="mx-auto max-w-screen-xl mt-8">
+    <Container className="mx-auto max-w-screen-xl mb-8">
       <section className="relative w-full min-h-56 md:min-h-96 overflow-hidden bg-bg-dark/60">
         {featuredItems.map((item, index) => {
           const previewUrl = previewUrls[item.featuredImage];
