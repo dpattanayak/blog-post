@@ -12,20 +12,18 @@ const HeroSection = () => {
 
   return (
     <>
-      <Carousel posts={postState} />
-
       <section
-        className="bg-cover bg-center min-h-[70vh] flex items-center justify-center relative"
+        className="bg-cover bg-center min-h-56 md:min-h-96 mb-8 flex items-center justify-center relative"
         style={{
           backgroundImage: 'url("/hero_bg.jpg")',
         }}
       >
         <div className="bg-black/40 w-full h-full absolute left-0 top-0"></div>
         <div className="relative z-10 text-center text-white p-4 md:p-8">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">
+          <h1 className="text-2xl md:text-5xl font-bold mb-4">
             Welcome to Blog Post
           </h1>
-          <p className="text-sm md:text-lg mb-8">
+          <p className="text-sm mb-8">
             Discover the latest articles, stories, and insights from top writers
             around the world.
           </p>
@@ -46,6 +44,8 @@ const HeroSection = () => {
           </div>
         </div>
       </section>
+
+      <Carousel posts={postState} />
 
       <div className="w-full flex flex-col md:flex-row mt-8 gap-4">
         <HeroBanner
