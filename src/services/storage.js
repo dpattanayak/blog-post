@@ -36,7 +36,7 @@ export class StorageService {
 
   getFilePreview(fileId) {
     try {
-      return this.storage.getFilePreview(config.appWriteBucketId, fileId);
+      return this.storage.getFileView(config.appWriteBucketId, fileId);
     } catch (error) {
       console.log("Appwrite service :: getFilePreview :: error", error);
       return false;

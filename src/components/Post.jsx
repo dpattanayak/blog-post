@@ -1,6 +1,6 @@
 import Prism from "prismjs";
 import "prismjs/themes/prism-okaidia.css";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -21,7 +21,10 @@ export default function Post() {
   const postState = useSelector((state) => state.post.posts);
   const bgImage = useSelector((state) => state.post.bgImage);
   const activePost = postState.filter((post) => post.$id === slug)[0];
-  const isAuthor = post && userData ? post.userid === userData.$id : false;
+  const isAuthor =
+    post && userData
+      ? post.userid === userData.$id || userData?.labels?.includes("admin")
+      : false;
 
   useEffect(() => {
     if (slug && postState.length) {

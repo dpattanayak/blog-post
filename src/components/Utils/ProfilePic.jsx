@@ -1,5 +1,3 @@
-import React from "react";
-
 function ProfilePic({ name = "Unknown Author", profilePic, date, isBanner }) {
   const getInitials = (name) => {
     const initials = name
@@ -20,10 +18,24 @@ function ProfilePic({ name = "Unknown Author", profilePic, date, isBanner }) {
     const diffInMinutes = Math.floor((now - postDate) / 60000);
 
     if (diffInMinutes < 1) return "Just now";
-    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+    if (diffInMinutes < 60)
+      return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
     if (diffInMinutes < 1440)
-      return `${Math.floor(diffInMinutes / 60)} hours ago`;
-    return `${Math.floor(diffInMinutes / 1440)} days ago`;
+      return `${Math.floor(diffInMinutes / 60)} hour${
+        Math.floor(diffInMinutes / 60) > 1 ? "s" : ""
+      } ago`;
+    if (diffInMinutes < 43200)
+      return `${Math.floor(diffInMinutes / 1440)} day${
+        Math.floor(diffInMinutes / 1440) > 1 ? "s" : ""
+      } ago`;
+    if (diffInMinutes < 525600)
+      return `${Math.floor(diffInMinutes / 43200)} month${
+        Math.floor(diffInMinutes / 43200) > 1 ? "s" : ""
+      } ago`;
+
+    return `${Math.floor(diffInMinutes / 525600)} year${
+      Math.floor(diffInMinutes / 525600) > 1 ? "s" : ""
+    } ago`;
   };
 
   return (
